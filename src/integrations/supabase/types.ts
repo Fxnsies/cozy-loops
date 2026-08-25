@@ -14,7 +14,77 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      order_messages: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          order_id: string
+          sender: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          order_id: string
+          sender: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          order_id?: string
+          sender?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_messages_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          code: string
+          contact: string | null
+          conversation_closed: boolean
+          created_at: string
+          customer_name: string
+          id: string
+          item: string
+          modifications: string | null
+          quote: string | null
+          status: string
+        }
+        Insert: {
+          code: string
+          contact?: string | null
+          conversation_closed?: boolean
+          created_at?: string
+          customer_name: string
+          id?: string
+          item: string
+          modifications?: string | null
+          quote?: string | null
+          status?: string
+        }
+        Update: {
+          code?: string
+          contact?: string | null
+          conversation_closed?: boolean
+          created_at?: string
+          customer_name?: string
+          id?: string
+          item?: string
+          modifications?: string | null
+          quote?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
