@@ -81,7 +81,8 @@ export const getOrder = createServerFn({ method: "POST" })
       .select("id, sender, body, created_at")
       .eq("order_id", order.id)
       .order("created_at", { ascending: true });
-    return { order: { ...order, id: undefined }, messages: messages ?? [] };
+    const { id: _id, ...publicOrder } = order;
+    return { order: publicOrder, messages: messages ?? [] };
   });
 
 export const sendCustomerMessage = createServerFn({ method: "POST" })
