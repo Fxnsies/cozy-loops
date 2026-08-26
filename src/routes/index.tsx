@@ -52,6 +52,12 @@ function Index() {
           contact: String(form.get("contact") ?? ""),
           item: String(form.get("item") ?? ""),
           modifications: String(form.get("modifications") ?? ""),
+          stuffing:
+            stuffed === "yes"
+              ? `Yes — ${String(form.get("stuffing_amount") ?? "").trim() || "amount not specified"}`
+              : stuffed === "no"
+                ? "No stuffing"
+                : "",
         },
       });
       const next = [res.code, ...saved.filter((c) => c !== res.code)].slice(0, 8);
