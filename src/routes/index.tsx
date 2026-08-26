@@ -66,6 +66,7 @@ function Index() {
       setSaved(next);
       setPlacedCode(res.code);
       e.currentTarget.reset();
+      setStuffed("");
     } catch {
       setError("Something went wrong. Please check the fields and try again.");
     } finally {
