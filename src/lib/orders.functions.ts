@@ -74,6 +74,7 @@ export const createOrder = createServerFn({ method: "POST" })
       contact: data.contact || null,
       item: data.item,
       modifications: data.modifications || null,
+      stuffing: data.stuffing || null,
     });
     if (error) throw new Error("Could not place the order. Please try again.");
     return { code };
