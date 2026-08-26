@@ -122,19 +122,28 @@ function OrderPage() {
               <p className="mt-2 text-sm text-muted-foreground">No messages yet.</p>
             )}
             <ul className="mt-4 grid gap-3">
-              {messages.map((m) => (
-                <li
-                  key={m.id}
-                  className={
-                    m.sender === "shop"
-                      ? "max-w-[85%] rounded-2xl bg-secondary px-4 py-3 text-secondary-foreground"
-                      : "ml-auto max-w-[85%] rounded-2xl bg-primary px-4 py-3 text-primary-foreground"
-                  }
-                >
-                  <p className="text-xs opacity-70">{m.sender === "shop" ? "Cozy Loops" : "You"}</p>
-                  <p className="mt-1 whitespace-pre-wrap">{m.body}</p>
-                </li>
-              ))}
+              {messages.map((m) =>
+                m.sender === "system" ? (
+                  <li
+                    key={m.id}
+                    className="mx-auto max-w-[95%] rounded-2xl border border-dashed border-accent-foreground/40 bg-accent/50 px-4 py-2 text-center text-sm font-semibold text-accent-foreground"
+                  >
+                    {m.body}
+                  </li>
+                ) : (
+                  <li
+                    key={m.id}
+                    className={
+                      m.sender === "shop"
+                        ? "max-w-[85%] rounded-2xl bg-secondary px-4 py-3 text-secondary-foreground"
+                        : "ml-auto max-w-[85%] rounded-2xl bg-primary px-4 py-3 text-primary-foreground"
+                    }
+                  >
+                    <p className="text-xs opacity-70">{m.sender === "shop" ? "Cozy Loops" : "You"}</p>
+                    <p className="mt-1 whitespace-pre-wrap">{m.body}</p>
+                  </li>
+                ),
+              )}
             </ul>
 
             {order.conversation_closed ? (
