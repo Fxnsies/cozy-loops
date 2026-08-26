@@ -6,6 +6,7 @@ const orderInput = z.object({
   contact: z.string().trim().max(160).optional().default(""),
   item: z.string().trim().min(1).max(1000),
   modifications: z.string().trim().max(1000).optional().default(""),
+  stuffing: z.string().trim().max(200).optional().default(""),
 });
 
 const codeInput = z.object({ code: z.string().trim().min(4).max(20) });
