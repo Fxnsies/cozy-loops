@@ -34,6 +34,18 @@ const adminCloseInput = z.object({
   order_id: z.string().uuid(),
 });
 
+const adminHideInput = z.object({
+  passcode: z.string().min(1).max(200),
+  order_id: z.string().uuid(),
+  hidden: z.boolean(),
+});
+
+const adminDeleteInput = z.object({
+  passcode: z.string().min(1).max(200),
+  order_id: z.string().uuid(),
+  confirm_code: z.string().trim().min(1).max(20),
+});
+
 function makeCode() {
   const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
   let out = "";
@@ -136,12 +148,31 @@ export const adminSetQuote = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     checkPasscode(data.passcode);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: existing } = await supabaseAdmin
+      .from("orders")
+      .select("quote")
+      .eq("id", data.order_id)
+      .maybeSingle();
+    const previous = existing?.quote ?? null;
+    const next = data.quote || null;
     const { error } = await supabaseAdmin
       .from("orders")
-      .update({ quote: data.quote || null, status: data.quote ? "quoted" : "new" })
+      .update({ quote: next, status: next ? "quoted" : "new" })
       .eq("id", data.order_id);
     if (error) throw new Error("Could not save the price.");
-    return { ok: true };
+
+    if (previous !== next) {
+      const notice =
+        next === null
+          ? "The price for this order has been removed — we'll share an updated one soon."
+          : previous
+            ? `Price updated: ${previous} → ${next}`
+            : `Price set: ${next}`;
+      await supabaseAdmin
+        .from("order_messages")
+        .insert({ order_id: data.order_id, sender: "system", body: notice });
+    }
+    return { ok: true, changed: previous !== next };
   });
 
 export const adminEndConversation = createServerFn({ method: "POST" })
@@ -154,5 +185,58 @@ export const adminEndConversation = createServerFn({ method: "POST" })
       .update({ conversation_closed: true, status: "closed" })
       .eq("id", data.order_id);
     if (error) throw new Error("Could not close the conversation.");
+    return { ok: true };
+  });
+
+export const adminReopenConversation = createServerFn({ method: "POST" })
+  .inputValidator((data: unknown) => adminCloseInput.parse(data))
+  .handler(async ({ data }) => {
+    checkPasscode(data.passcode);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: existing } = await supabaseAdmin
+      .from("orders")
+      .select("quote")
+      .eq("id", data.order_id)
+      .maybeSingle();
+    const { error } = await supabaseAdmin
+      .from("orders")
+      .update({ conversation_closed: false, status: existing?.quote ? "quoted" : "new" })
+      .eq("id", data.order_id);
+    if (error) throw new Error("Could not reopen the conversation.");
+    await supabaseAdmin
+      .from("order_messages")
+      .insert({ order_id: data.order_id, sender: "system", body: "This conversation has been reopened." });
+    return { ok: true };
+  });
+
+export const adminSetHidden = createServerFn({ method: "POST" })
+  .inputValidator((data: unknown) => adminHideInput.parse(data))
+  .handler(async ({ data }) => {
+    checkPasscode(data.passcode);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin
+      .from("orders")
+      .update({ hidden: data.hidden })
+      .eq("id", data.order_id);
+    if (error) throw new Error("Could not update this conversation.");
+    return { ok: true };
+  });
+
+export const adminDeleteOrder = createServerFn({ method: "POST" })
+  .inputValidator((data: unknown) => adminDeleteInput.parse(data))
+  .handler(async ({ data }) => {
+    checkPasscode(data.passcode);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: order } = await supabaseAdmin
+      .from("orders")
+      .select("id, code")
+      .eq("id", data.order_id)
+      .maybeSingle();
+    if (!order) throw new Error("Order not found");
+    if (order.code.toUpperCase() !== data.confirm_code.toUpperCase()) {
+      throw new Error("The typed order code does not match.");
+    }
+    const { error } = await supabaseAdmin.from("orders").delete().eq("id", data.order_id);
+    if (error) throw new Error("Could not delete this order.");
     return { ok: true };
   });
