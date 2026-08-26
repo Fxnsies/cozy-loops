@@ -31,6 +31,7 @@ function Index() {
   const [error, setError] = useState("");
   const [placedCode, setPlacedCode] = useState("");
   const [track, setTrack] = useState("");
+  const [stuffed, setStuffed] = useState<"" | "yes" | "no">("");
 
   useEffect(() => {
     try {
