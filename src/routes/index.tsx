@@ -31,6 +31,7 @@ function Index() {
   const [error, setError] = useState("");
   const [placedCode, setPlacedCode] = useState("");
   const [track, setTrack] = useState("");
+  const [stuffed, setStuffed] = useState<"" | "yes" | "no">("");
 
   useEffect(() => {
     try {
@@ -52,6 +53,12 @@ function Index() {
           contact: String(form.get("contact") ?? ""),
           item: String(form.get("item") ?? ""),
           modifications: String(form.get("modifications") ?? ""),
+          stuffing:
+            stuffed === "yes"
+              ? `Yes — ${String(form.get("stuffing_amount") ?? "").trim() || "amount not specified"}`
+              : stuffed === "no"
+                ? "No stuffing"
+                : "",
         },
       });
       const next = [res.code, ...saved.filter((c) => c !== res.code)].slice(0, 8);
@@ -59,6 +66,7 @@ function Index() {
       setSaved(next);
       setPlacedCode(res.code);
       e.currentTarget.reset();
+      setStuffed("");
     } catch {
       setError("Something went wrong. Please check the fields and try again.");
     } finally {
@@ -146,8 +154,46 @@ function Index() {
               rows={4}
               placeholder="colours, size changes, initials, extra details…"
             />
+
+            <fieldset className="grid gap-3 rounded-2xl border border-input px-4 py-4">
+              <legend className="px-1 text-sm font-semibold">
+                Do you want it stuffed with cotton?
+              </legend>
+              <div className="flex flex-wrap gap-3">
+                {(["yes", "no"] as const).map((v) => (
+                  <button
+                    key={v}
+                    type="button"
+                    onClick={() => setStuffed(v)}
+                    className={
+                      stuffed === v
+                        ? "rounded-full bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground"
+                        : "rounded-full border border-border px-5 py-2 text-sm font-semibold transition hover:bg-muted"
+                    }
+                  >
+                    {v === "yes" ? "Yes, stuff it" : "No stuffing"}
+                  </button>
+                ))}
+              </div>
+              {stuffed === "yes" && (
+                <label className="grid gap-2">
+                  <span className="text-sm font-semibold">How much stuffing?</span>
+                  <input
+                    name="stuffing_amount"
+                    maxLength={180}
+                    placeholder="e.g. lightly stuffed / firm and squishy / very full"
+                    className="rounded-2xl border border-input bg-background px-4 py-3 outline-none focus:ring-2 focus:ring-ring"
+                  />
+                </label>
+              )}
+            </fieldset>
+
             <p className="rounded-2xl bg-accent/60 px-4 py-3 text-sm text-accent-foreground">
               Please check this website again in 1 day to see how much your order will cost.
+            </p>
+            <p className="rounded-2xl border-2 border-primary bg-primary/10 px-4 py-3 text-sm font-semibold text-foreground">
+              💬 Important: everything — your price, questions and updates — is sent through the chat
+              on your order page. Keep your order code and check the chat.
             </p>
             {error && <p className="text-sm text-destructive">{error}</p>}
             <button

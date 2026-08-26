@@ -6,6 +6,7 @@ const orderInput = z.object({
   contact: z.string().trim().max(160).optional().default(""),
   item: z.string().trim().min(1).max(1000),
   modifications: z.string().trim().max(1000).optional().default(""),
+  stuffing: z.string().trim().max(200).optional().default(""),
 });
 
 const codeInput = z.object({ code: z.string().trim().min(4).max(20) });
@@ -73,6 +74,7 @@ export const createOrder = createServerFn({ method: "POST" })
       contact: data.contact || null,
       item: data.item,
       modifications: data.modifications || null,
+      stuffing: data.stuffing || null,
     });
     if (error) throw new Error("Could not place the order. Please try again.");
     return { code };
@@ -84,7 +86,7 @@ export const getOrder = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: order } = await supabaseAdmin
       .from("orders")
-      .select("id, code, customer_name, item, modifications, quote, status, conversation_closed, created_at")
+      .select("id, code, customer_name, item, modifications, stuffing, quote, status, conversation_closed, created_at")
       .eq("code", data.code.toUpperCase())
       .maybeSingle();
     if (!order) return null;

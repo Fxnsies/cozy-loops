@@ -59,6 +59,7 @@ export type Database = {
           modifications: string | null
           quote: string | null
           status: string
+          stuffing: string | null
         }
         Insert: {
           code: string
@@ -72,6 +73,7 @@ export type Database = {
           modifications?: string | null
           quote?: string | null
           status?: string
+          stuffing?: string | null
         }
         Update: {
           code?: string
@@ -85,6 +87,7 @@ export type Database = {
           modifications?: string | null
           quote?: string | null
           status?: string
+          stuffing?: string | null
         }
         Relationships: []
       }
