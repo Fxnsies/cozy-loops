@@ -86,7 +86,7 @@ export const getOrder = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: order } = await supabaseAdmin
       .from("orders")
-      .select("id, code, customer_name, item, modifications, quote, status, conversation_closed, created_at")
+      .select("id, code, customer_name, item, modifications, stuffing, quote, status, conversation_closed, created_at")
       .eq("code", data.code.toUpperCase())
       .maybeSingle();
     if (!order) return null;
