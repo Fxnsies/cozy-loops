@@ -84,39 +84,14 @@ function Index() {
         </p>
       </header>
 
-      {saved.length > 0 && (
-        <div className="card-cozy mt-10 p-5">
-          <h2 className="text-lg font-semibold">Your orders</h2>
-          <ul className="mt-3 flex flex-wrap gap-2">
-            {saved.map((code) => (
-              <li key={code}>
-                <Link
-                  to="/order/$code"
-                  params={{ code }}
-                  className="inline-flex rounded-full bg-secondary px-4 py-2 text-sm font-semibold text-secondary-foreground transition hover:bg-accent"
-                >
-                  {code} →
-                </Link>
-              </li>
-            ))}
-          </ul>
-          <p className="mt-3 text-sm text-muted-foreground">
-            Open an order to read replies from us and write back.
-          </p>
-        </div>
-      )}
-
       {placedCode ? (
         <section className="card-cozy mt-10 p-8 text-center">
           <h2 className="text-3xl font-bold text-primary">Order received!</h2>
           <p className="mt-3 text-muted-foreground">Your order code is</p>
           <p className="mt-2 text-4xl font-bold tracking-[0.3em] text-foreground">{placedCode}</p>
           <p className="mx-auto mt-4 max-w-md text-muted-foreground">
-            Please check back on this website in 1 day to see how much it will cost.
-          </p>
-          <p className="mx-auto mt-4 max-w-md rounded-2xl border-2 border-primary bg-primary/10 px-4 py-3 text-sm font-semibold">
-            💬 Your price and all our messages arrive in the chat on your order page — that's the only
-            place we can reach you. Please open it and check back.
+            💬 Your price and updates arrive in the chat on your order page — usually within 5
+            minutes, at most a day.
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             <Link
@@ -192,12 +167,9 @@ function Index() {
               )}
             </fieldset>
 
-            <p className="rounded-2xl bg-accent/60 px-4 py-3 text-sm text-accent-foreground">
-              Please check this website again in 1 day to see how much your order will cost.
-            </p>
             <p className="rounded-2xl border-2 border-primary bg-primary/10 px-4 py-3 text-sm font-semibold text-foreground">
-              💬 Important: everything — your price, questions and updates — is sent through the chat
-              on your order page. Keep your order code and check the chat.
+              💬 Your price, questions and updates all come through the chat on your order page —
+              usually within 5 minutes, at most a day.
             </p>
             {error && <p className="text-sm text-destructive">{error}</p>}
             <button
@@ -233,6 +205,21 @@ function Index() {
             Look up
           </button>
         </form>
+        {saved.length > 0 && (
+          <ul className="mt-4 flex flex-wrap gap-2">
+            {saved.map((code) => (
+              <li key={code}>
+                <Link
+                  to="/order/$code"
+                  params={{ code }}
+                  className="inline-flex rounded-full bg-secondary px-4 py-2 text-sm font-semibold text-secondary-foreground transition hover:bg-accent"
+                >
+                  {code} →
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
       </section>
 
       <footer className="mt-10 text-center text-sm text-muted-foreground">

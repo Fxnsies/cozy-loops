@@ -97,7 +97,8 @@ function OrderPage() {
                 <p className="text-lg font-bold text-accent-foreground">Your price: {order.quote}</p>
               ) : (
                 <p className="text-sm text-accent-foreground">
-                  We're working out your price — please check back on this website in 1 day.
+                  We're working out your price — check back in a little while (usually 5 minutes, at
+                  most a day).
                 </p>
               )}
             </div>
@@ -106,8 +107,7 @@ function OrderPage() {
           <section className="card-cozy mt-6 border-2 border-primary p-7">
             <h2 className="text-2xl font-bold text-primary">💬 Chat with Cozy Loops</h2>
             <p className="mt-1 text-sm font-semibold">
-              This chat is how we send you your price, questions and updates — please read and reply
-              here.
+              This chat is how we send your price, questions and updates.
             </p>
             {messages.length === 0 && (
               <p className="mt-4 text-sm text-muted-foreground">
