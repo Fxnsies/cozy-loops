@@ -205,6 +205,21 @@ function Index() {
             Look up
           </button>
         </form>
+        {saved.length > 0 && (
+          <ul className="mt-4 flex flex-wrap gap-2">
+            {saved.map((code) => (
+              <li key={code}>
+                <Link
+                  to="/order/$code"
+                  params={{ code }}
+                  className="inline-flex rounded-full bg-secondary px-4 py-2 text-sm font-semibold text-secondary-foreground transition hover:bg-accent"
+                >
+                  {code} →
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
       </section>
 
       <footer className="mt-10 text-center text-sm text-muted-foreground">
