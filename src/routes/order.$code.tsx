@@ -23,6 +23,7 @@ type OrderView = {
   customer_name: string;
   item: string;
   modifications: string | null;
+  stuffing: string | null;
   quote: string | null;
   status: string;
   conversation_closed: boolean;

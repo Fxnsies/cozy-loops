@@ -32,6 +32,7 @@ type Order = {
   contact: string | null;
   item: string;
   modifications: string | null;
+  stuffing: string | null;
   quote: string | null;
   status: string;
   conversation_closed: boolean;
