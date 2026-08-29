@@ -32,6 +32,7 @@ type Order = {
   contact: string | null;
   item: string;
   modifications: string | null;
+  stuffing: string | null;
   quote: string | null;
   status: string;
   conversation_closed: boolean;
@@ -225,6 +226,12 @@ function OrderCard(props: {
         <>
           <p className="mt-3 text-sm font-semibold">Modifications</p>
           <p className="whitespace-pre-wrap text-muted-foreground">{order.modifications}</p>
+        </>
+      )}
+      {order.stuffing && (
+        <>
+          <p className="mt-3 text-sm font-semibold">Cotton stuffing</p>
+          <p className="whitespace-pre-wrap text-muted-foreground">{order.stuffing}</p>
         </>
       )}
 

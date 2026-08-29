@@ -23,6 +23,7 @@ type OrderView = {
   customer_name: string;
   item: string;
   modifications: string | null;
+  stuffing: string | null;
   quote: string | null;
   status: string;
   conversation_closed: boolean;
@@ -86,26 +87,12 @@ function OrderPage() {
         </div>
       ) : (
         <>
-          <section className="card-cozy mt-8 p-7">
+          <section className="mt-8">
             <h1 className="text-3xl font-bold text-primary">Order {order.code}</h1>
             <p className="mt-1 text-sm text-muted-foreground">
               Placed by {order.customer_name} on {new Date(order.created_at).toLocaleDateString()}
             </p>
-
-            <dl className="mt-5 grid gap-4">
-              <div>
-                <dt className="text-sm font-semibold">What you asked for</dt>
-                <dd className="mt-1 whitespace-pre-wrap text-muted-foreground">{order.item}</dd>
-              </div>
-              {order.modifications && (
-                <div>
-                  <dt className="text-sm font-semibold">Modifications</dt>
-                  <dd className="mt-1 whitespace-pre-wrap text-muted-foreground">{order.modifications}</dd>
-                </div>
-              )}
-            </dl>
-
-            <div className="mt-6 rounded-2xl bg-accent/60 px-5 py-4">
+            <div className="mt-4 rounded-2xl bg-accent/60 px-5 py-4">
               {order.quote ? (
                 <p className="text-lg font-bold text-accent-foreground">Your price: {order.quote}</p>
               ) : (
@@ -116,10 +103,16 @@ function OrderPage() {
             </div>
           </section>
 
-          <section className="card-cozy mt-6 p-7">
-            <h2 className="text-xl font-bold">Messages</h2>
+          <section className="card-cozy mt-6 border-2 border-primary p-7">
+            <h2 className="text-2xl font-bold text-primary">💬 Chat with Cozy Loops</h2>
+            <p className="mt-1 text-sm font-semibold">
+              This chat is how we send you your price, questions and updates — please read and reply
+              here.
+            </p>
             {messages.length === 0 && (
-              <p className="mt-2 text-sm text-muted-foreground">No messages yet.</p>
+              <p className="mt-4 text-sm text-muted-foreground">
+                No messages yet — we'll write to you here soon.
+              </p>
             )}
             <ul className="mt-4 grid gap-3">
               {messages.map((m) =>
@@ -166,6 +159,28 @@ function OrderPage() {
                 </button>
               </form>
             )}
+          </section>
+
+          <section className="card-cozy mt-6 p-7">
+            <h2 className="text-xl font-bold">Your order details</h2>
+            <dl className="mt-4 grid gap-4">
+              <div>
+                <dt className="text-sm font-semibold">What you asked for</dt>
+                <dd className="mt-1 whitespace-pre-wrap text-muted-foreground">{order.item}</dd>
+              </div>
+              {order.modifications && (
+                <div>
+                  <dt className="text-sm font-semibold">Modifications</dt>
+                  <dd className="mt-1 whitespace-pre-wrap text-muted-foreground">{order.modifications}</dd>
+                </div>
+              )}
+              {order.stuffing && (
+                <div>
+                  <dt className="text-sm font-semibold">Cotton stuffing</dt>
+                  <dd className="mt-1 whitespace-pre-wrap text-muted-foreground">{order.stuffing}</dd>
+                </div>
+              )}
+            </dl>
           </section>
         </>
       )}
