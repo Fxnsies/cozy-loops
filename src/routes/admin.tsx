@@ -102,12 +102,22 @@ function AdminPage() {
         <form onSubmit={onUnlock} className="card-cozy mt-6 grid gap-4 p-6">
           <label className="grid gap-2">
             <span className="text-sm font-semibold">Passcode</span>
-            <input
-              type="password"
-              value={passcode}
-              onChange={(e) => setPasscode(e.target.value)}
-              className="rounded-2xl border border-input bg-background px-4 py-3 outline-none focus:ring-2 focus:ring-ring"
-            />
+            <div className="relative">
+              <input
+                type={showPass ? "text" : "password"}
+                value={passcode}
+                onChange={(e) => setPasscode(e.target.value)}
+                className="w-full rounded-2xl border border-input bg-background px-4 py-3 pr-14 outline-none focus:ring-2 focus:ring-ring"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPass((v) => !v)}
+                aria-label={showPass ? "Hide passcode" : "Show passcode"}
+                className="absolute inset-y-0 right-0 flex items-center px-4 text-lg"
+              >
+                {showPass ? "🙈" : "👁️"}
+              </button>
+            </div>
           </label>
           {error && <p className="text-sm text-destructive">{error}</p>}
           <button className="rounded-full bg-primary px-6 py-3 font-semibold text-primary-foreground">
