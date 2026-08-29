@@ -51,6 +51,7 @@ function AdminPage() {
   const deleteOrder = useServerFn(adminDeleteOrder);
 
   const [passcode, setPasscode] = useState("");
+  const [showPass, setShowPass] = useState(false);
   const [unlocked, setUnlocked] = useState(false);
   const [error, setError] = useState("");
   const [orders, setOrders] = useState<Order[]>([]);
