@@ -73,6 +73,12 @@ function AdminPage() {
   }, []);
 
   useEffect(() => {
+    if (unlocked) return;
+    setPasscode("");
+    setShowPass(false);
+  }, [unlocked]);
+
+  useEffect(() => {
     if (!unlocked) return;
     const t = setInterval(() => void load(passcode).catch(() => {}), 15000);
     return () => clearInterval(t);
