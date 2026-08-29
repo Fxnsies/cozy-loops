@@ -189,12 +189,9 @@ function Index() {
               )}
             </fieldset>
 
-            <p className="rounded-2xl bg-accent/60 px-4 py-3 text-sm text-accent-foreground">
-              Please check this website again in 1 day to see how much your order will cost.
-            </p>
             <p className="rounded-2xl border-2 border-primary bg-primary/10 px-4 py-3 text-sm font-semibold text-foreground">
-              💬 Important: everything — your price, questions and updates — is sent through the chat
-              on your order page. Keep your order code and check the chat.
+              💬 Your price, questions and updates all come through the chat on your order page —
+              usually within 5 minutes, at most a day.
             </p>
             {error && <p className="text-sm text-destructive">{error}</p>}
             <button
