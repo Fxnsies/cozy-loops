@@ -228,6 +228,12 @@ function OrderCard(props: {
           <p className="whitespace-pre-wrap text-muted-foreground">{order.modifications}</p>
         </>
       )}
+      {order.stuffing && (
+        <>
+          <p className="mt-3 text-sm font-semibold">Cotton stuffing</p>
+          <p className="whitespace-pre-wrap text-muted-foreground">{order.stuffing}</p>
+        </>
+      )}
 
       <form
         className="mt-5 flex flex-wrap gap-3"
