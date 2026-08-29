@@ -114,13 +114,17 @@ function Index() {
           <p className="mx-auto mt-4 max-w-md text-muted-foreground">
             Please check back on this website in 1 day to see how much it will cost.
           </p>
+          <p className="mx-auto mt-4 max-w-md rounded-2xl border-2 border-primary bg-primary/10 px-4 py-3 text-sm font-semibold">
+            💬 Your price and all our messages arrive in the chat on your order page — that's the only
+            place we can reach you. Please open it and check back.
+          </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             <Link
               to="/order/$code"
               params={{ code: placedCode }}
-              className="rounded-full bg-primary px-6 py-3 font-semibold text-primary-foreground transition hover:opacity-90"
+              className="rounded-full bg-primary px-7 py-4 text-lg font-bold text-primary-foreground shadow-lg transition hover:opacity-90"
             >
-              Open my order
+              💬 Open my chat
             </Link>
             <button
               onClick={() => setPlacedCode("")}
