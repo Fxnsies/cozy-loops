@@ -59,7 +59,7 @@ function makeCode() {
 function checkPasscode(passcode: string) {
   const expected = process.env["SHOP_ADMIN_PASSCODE"];
   if (!expected || passcode !== expected) {
-    throw new Error("Incorrect passcode");
+    throw new Response("Unauthorized", { status: 401 });
   }
 }
 
