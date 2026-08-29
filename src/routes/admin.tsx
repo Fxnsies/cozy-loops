@@ -68,14 +68,9 @@ function AdminPage() {
   );
 
   useEffect(() => {
-    const stored = sessionStorage.getItem("cozy-loops-pass");
-    if (stored) {
-      setPasscode(stored);
-      load(stored)
-        .then(() => setUnlocked(true))
-        .catch(() => sessionStorage.removeItem("cozy-loops-pass"));
-    }
-  }, [load]);
+    setPasscode("");
+    setShowPass(false);
+  }, []);
 
   useEffect(() => {
     if (!unlocked) return;
@@ -88,7 +83,6 @@ function AdminPage() {
     setError("");
     try {
       await load(passcode);
-      sessionStorage.setItem("cozy-loops-pass", passcode);
       setUnlocked(true);
     } catch {
       setError("Incorrect passcode.");
