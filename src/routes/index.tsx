@@ -84,28 +84,6 @@ function Index() {
         </p>
       </header>
 
-      {saved.length > 0 && (
-        <div className="card-cozy mt-10 p-5">
-          <h2 className="text-lg font-semibold">Your orders</h2>
-          <ul className="mt-3 flex flex-wrap gap-2">
-            {saved.map((code) => (
-              <li key={code}>
-                <Link
-                  to="/order/$code"
-                  params={{ code }}
-                  className="inline-flex rounded-full bg-secondary px-4 py-2 text-sm font-semibold text-secondary-foreground transition hover:bg-accent"
-                >
-                  {code} →
-                </Link>
-              </li>
-            ))}
-          </ul>
-          <p className="mt-3 text-sm text-muted-foreground">
-            Open an order to read replies from us and write back.
-          </p>
-        </div>
-      )}
-
       {placedCode ? (
         <section className="card-cozy mt-10 p-8 text-center">
           <h2 className="text-3xl font-bold text-primary">Order received!</h2>
