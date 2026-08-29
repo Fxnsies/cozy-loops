@@ -112,11 +112,8 @@ function Index() {
           <p className="mt-3 text-muted-foreground">Your order code is</p>
           <p className="mt-2 text-4xl font-bold tracking-[0.3em] text-foreground">{placedCode}</p>
           <p className="mx-auto mt-4 max-w-md text-muted-foreground">
-            Please check back on this website in 1 day to see how much it will cost.
-          </p>
-          <p className="mx-auto mt-4 max-w-md rounded-2xl border-2 border-primary bg-primary/10 px-4 py-3 text-sm font-semibold">
-            💬 Your price and all our messages arrive in the chat on your order page — that's the only
-            place we can reach you. Please open it and check back.
+            💬 Your price and updates arrive in the chat on your order page — usually within 5
+            minutes, at most a day.
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             <Link
