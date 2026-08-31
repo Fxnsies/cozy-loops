@@ -206,24 +206,16 @@ function OrderPage() {
               </button>
             ) : (
               <div className="mt-4 grid gap-3">
-                <label className="grid gap-2">
-                  <span className="text-sm font-semibold">
-                    To confirm, type your order code «{order.code}»
-                  </span>
-                  <input
-                    value={deleteCode}
-                    onChange={(e) => setDeleteCode(e.target.value)}
-                    maxLength={20}
-                    className="rounded-2xl border border-input bg-background px-4 py-3 uppercase tracking-widest outline-none focus:ring-2 focus:ring-ring"
-                  />
-                </label>
+                <p className="text-sm font-semibold text-destructive">
+                  Are you sure you want to delete this order and its whole chat?
+                </p>
                 {deleteError && <p className="text-sm text-destructive">{deleteError}</p>}
                 <div className="flex flex-wrap gap-3">
                   <button
                     onClick={async () => {
                       setDeleteError("");
                       try {
-                        await deleteOrder({ data: { code: order.code, confirm_code: deleteCode } });
+                        await deleteOrder({ data: { code: order.code, confirm_code: order.code } });
                         try {
                           const list: string[] = JSON.parse(
                             localStorage.getItem("cozy-loops-orders") ?? "[]",
@@ -237,17 +229,16 @@ function OrderPage() {
                         }
                         void navigate({ to: "/" });
                       } catch {
-                        setDeleteError("The typed order code does not match.");
+                        setDeleteError("Could not delete this order.");
                       }
                     }}
                     className="rounded-full bg-destructive px-6 py-3 text-sm font-semibold text-destructive-foreground transition hover:opacity-90"
                   >
-                    Permanently delete
+                    Yes, delete it
                   </button>
                   <button
                     onClick={() => {
                       setDeleteStep(0);
-                      setDeleteCode("");
                       setDeleteError("");
                     }}
                     className="rounded-full border border-border px-6 py-3 text-sm font-semibold transition hover:bg-muted"
