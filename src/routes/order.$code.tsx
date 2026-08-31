@@ -97,8 +97,8 @@ function OrderPage() {
                 <p className="text-lg font-bold text-accent-foreground">Your price: {order.quote}</p>
               ) : (
                 <p className="text-sm text-accent-foreground">
-                  We're working out your price — check back in a little while (usually 5 minutes, at
-                  most a day).
+                  We're working out your price — the wait time is a minimum of 5 minutes and at most
+                  a day.
                 </p>
               )}
             </div>
