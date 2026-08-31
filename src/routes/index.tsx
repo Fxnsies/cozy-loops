@@ -223,6 +223,7 @@ function Index() {
           </ul>
         )}
       </section>
+      )}
 
       <footer className="mt-10 text-center text-sm text-muted-foreground">
         <Link to="/admin" className="underline underline-offset-4">
