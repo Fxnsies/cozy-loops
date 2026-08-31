@@ -348,56 +348,30 @@ function OrderCard(props: {
             type="button"
             onClick={() => {
               setDeleteStep(1);
-              setConfirmCode("");
               setDeleteError("");
             }}
             className="rounded-full border border-destructive px-4 py-2 text-sm font-semibold text-destructive transition hover:bg-destructive/10"
           >
             Delete
           </button>
-        ) : deleteStep === 1 ? (
+        ) : (
           <div className="flex flex-wrap items-center gap-3 rounded-2xl bg-destructive/10 px-4 py-3">
             <p className="text-sm font-semibold text-destructive">
-              Delete this order and its whole chat?
+              Are you sure you want to delete this order and its whole chat?
             </p>
             <button
               type="button"
-              onClick={() => setDeleteStep(2)}
+              onClick={async () => {
+                setDeleteError("");
+                try {
+                  await props.onDelete(order.code);
+                } catch {
+                  setDeleteError("Could not delete this order.");
+                }
+              }}
               className="rounded-full bg-destructive px-4 py-2 text-sm font-semibold text-destructive-foreground"
             >
-              Yes, continue
-            </button>
-            <button
-              type="button"
-              onClick={() => setDeleteStep(0)}
-              className="rounded-full border border-border px-4 py-2 text-sm font-semibold"
-            >
-              Cancel
-            </button>
-          </div>
-        ) : (
-          <form
-            className="flex flex-wrap items-center gap-3 rounded-2xl bg-destructive/10 px-4 py-3"
-            onSubmit={async (e) => {
-              e.preventDefault();
-              setDeleteError("");
-              try {
-                await props.onDelete(confirmCode.trim());
-              } catch {
-                setDeleteError("Code did not match. Nothing was deleted.");
-              }
-            }}
-          >
-            <label className="text-sm font-semibold text-destructive">
-              Type «{order.code}» to confirm
-            </label>
-            <input
-              value={confirmCode}
-              onChange={(e) => setConfirmCode(e.target.value)}
-              className="rounded-2xl border border-input bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
-            />
-            <button className="rounded-full bg-destructive px-4 py-2 text-sm font-semibold text-destructive-foreground">
-              Delete permanently
+              Yes, delete
             </button>
             <button
               type="button"
@@ -407,7 +381,7 @@ function OrderCard(props: {
               Cancel
             </button>
             {deleteError && <p className="w-full text-sm text-destructive">{deleteError}</p>}
-          </form>
+          </div>
         )}
       </div>
     </section>
