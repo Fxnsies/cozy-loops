@@ -1,8 +1,9 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useCallback, useEffect, useState } from "react";
 
-import { getOrder, sendCustomerMessage } from "@/lib/orders.functions";
+import { FounderMark } from "@/components/FounderMark";
+import { customerDeleteOrder, getOrder, sendCustomerMessage } from "@/lib/orders.functions";
 
 export const Route = createFileRoute("/order/$code")({
   head: () => ({
@@ -34,12 +35,17 @@ function OrderPage() {
   const { code } = Route.useParams();
   const fetchOrder = useServerFn(getOrder);
   const sendMessage = useServerFn(sendCustomerMessage);
+  const deleteOrder = useServerFn(customerDeleteOrder);
+  const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
   const [order, setOrder] = useState<OrderView | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [draft, setDraft] = useState("");
   const [error, setError] = useState("");
+  const [deleteStep, setDeleteStep] = useState<0 | 1>(0);
+  const [deleteCode, setDeleteCode] = useState("");
+  const [deleteError, setDeleteError] = useState("");
 
   const load = useCallback(async () => {
     const res = await fetchOrder({ data: { code } });
@@ -182,8 +188,79 @@ function OrderPage() {
               )}
             </dl>
           </section>
+
+          <section className="card-cozy mt-6 p-7">
+            <h2 className="text-xl font-bold">Delete this order</h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              This removes the order and the whole chat for good. It can't be undone.
+            </p>
+            {deleteStep === 0 ? (
+              <button
+                onClick={() => {
+                  setDeleteStep(1);
+                  setDeleteError("");
+                }}
+                className="mt-4 rounded-full border border-destructive px-6 py-3 text-sm font-semibold text-destructive transition hover:bg-destructive/10"
+              >
+                Delete my order
+              </button>
+            ) : (
+              <div className="mt-4 grid gap-3">
+                <label className="grid gap-2">
+                  <span className="text-sm font-semibold">
+                    To confirm, type your order code «{order.code}»
+                  </span>
+                  <input
+                    value={deleteCode}
+                    onChange={(e) => setDeleteCode(e.target.value)}
+                    maxLength={20}
+                    className="rounded-2xl border border-input bg-background px-4 py-3 uppercase tracking-widest outline-none focus:ring-2 focus:ring-ring"
+                  />
+                </label>
+                {deleteError && <p className="text-sm text-destructive">{deleteError}</p>}
+                <div className="flex flex-wrap gap-3">
+                  <button
+                    onClick={async () => {
+                      setDeleteError("");
+                      try {
+                        await deleteOrder({ data: { code: order.code, confirm_code: deleteCode } });
+                        try {
+                          const list: string[] = JSON.parse(
+                            localStorage.getItem("cozy-loops-orders") ?? "[]",
+                          );
+                          localStorage.setItem(
+                            "cozy-loops-orders",
+                            JSON.stringify(list.filter((c) => c !== order.code)),
+                          );
+                        } catch {
+                          /* ignore */
+                        }
+                        void navigate({ to: "/" });
+                      } catch {
+                        setDeleteError("The typed order code does not match.");
+                      }
+                    }}
+                    className="rounded-full bg-destructive px-6 py-3 text-sm font-semibold text-destructive-foreground transition hover:opacity-90"
+                  >
+                    Permanently delete
+                  </button>
+                  <button
+                    onClick={() => {
+                      setDeleteStep(0);
+                      setDeleteCode("");
+                      setDeleteError("");
+                    }}
+                    className="rounded-full border border-border px-6 py-3 text-sm font-semibold transition hover:bg-muted"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+          </section>
         </>
       )}
+      <FounderMark />
     </main>
   );
 }
