@@ -216,8 +216,7 @@ function OrderCard(props: {
   const { order, messages } = props;
   const [quote, setQuote] = useState(order.quote ?? "");
   const [draft, setDraft] = useState("");
-  const [deleteStep, setDeleteStep] = useState<0 | 1 | 2>(0);
-  const [confirmCode, setConfirmCode] = useState("");
+  const [deleteStep, setDeleteStep] = useState<0 | 1>(0);
   const [deleteError, setDeleteError] = useState("");
 
   return (
