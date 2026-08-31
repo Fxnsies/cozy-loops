@@ -184,6 +184,7 @@ function Index() {
         </section>
       )}
 
+      {!placedCode && (
       <section className="card-cozy mt-8 p-7">
         <h2 className="text-xl font-bold">Already ordered?</h2>
         <p className="mt-1 text-sm text-muted-foreground">Enter your order code to see your price and messages.</p>

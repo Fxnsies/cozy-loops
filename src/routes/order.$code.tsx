@@ -44,7 +44,6 @@ function OrderPage() {
   const [draft, setDraft] = useState("");
   const [error, setError] = useState("");
   const [deleteStep, setDeleteStep] = useState<0 | 1>(0);
-  const [deleteCode, setDeleteCode] = useState("");
   const [deleteError, setDeleteError] = useState("");
 
   const load = useCallback(async () => {
