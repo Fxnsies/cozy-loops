@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 
+import { FounderMark } from "@/components/FounderMark";
 import { createOrder } from "@/lib/orders.functions";
 
 export const Route = createFileRoute("/")({
@@ -90,8 +91,8 @@ function Index() {
           <p className="mt-3 text-muted-foreground">Your order code is</p>
           <p className="mt-2 text-4xl font-bold tracking-[0.3em] text-foreground">{placedCode}</p>
           <p className="mx-auto mt-4 max-w-md text-muted-foreground">
-            💬 Your price and updates arrive in the chat on your order page — usually within 5
-            minutes, at most a day.
+            💬 Your price and updates arrive in the chat on your order page — the wait time is a
+            minimum of 5 minutes and at most a day.
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             <Link
@@ -169,7 +170,7 @@ function Index() {
 
             <p className="rounded-2xl border-2 border-primary bg-primary/10 px-4 py-3 text-sm font-semibold text-foreground">
               💬 Your price, questions and updates all come through the chat on your order page —
-              usually within 5 minutes, at most a day.
+              the wait time is a minimum of 5 minutes and at most a day.
             </p>
             {error && <p className="text-sm text-destructive">{error}</p>}
             <button
@@ -227,6 +228,7 @@ function Index() {
           Shop owner login
         </Link>
       </footer>
+      <FounderMark />
     </main>
   );
 }

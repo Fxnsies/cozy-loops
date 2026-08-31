@@ -242,3 +242,27 @@ export const adminDeleteOrder = createServerFn({ method: "POST" })
     if (error) throw new Error("Could not delete this order.");
     return { ok: true };
   });
+
+const customerDeleteInput = z.object({
+  code: z.string().trim().min(4).max(20),
+  confirm_code: z.string().trim().min(1).max(20),
+});
+
+export const customerDeleteOrder = createServerFn({ method: "POST" })
+  .inputValidator((data: unknown) => customerDeleteInput.parse(data))
+  .handler(async ({ data }) => {
+    const code = data.code.toUpperCase();
+    if (code !== data.confirm_code.trim().toUpperCase()) {
+      throw new Error("The typed order code does not match.");
+    }
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: order } = await supabaseAdmin
+      .from("orders")
+      .select("id")
+      .eq("code", code)
+      .maybeSingle();
+    if (!order) throw new Error("Order not found");
+    const { error } = await supabaseAdmin.from("orders").delete().eq("id", order.id);
+    if (error) throw new Error("Could not delete this order.");
+    return { ok: true };
+  });

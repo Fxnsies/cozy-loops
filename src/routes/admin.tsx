@@ -117,7 +117,7 @@ function AdminPage() {
                 aria-label={showPass ? "Hide passcode" : "Show passcode"}
                 className="absolute inset-y-0 right-0 flex items-center px-4 text-muted-foreground transition hover:text-foreground"
               >
-                {showPass ? <EyeOff size={20} /> : <Eye size={20} />}
+                {showPass ? <Eye size={20} /> : <EyeOff size={20} />}
               </button>
             </div>
           </label>
