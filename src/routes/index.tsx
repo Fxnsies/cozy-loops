@@ -247,6 +247,9 @@ function Field(props: {
       <span className="text-sm font-semibold">{props.label}</span>
       <input
         name={props.name}
+        autoComplete="off"
+        autoCorrect="off"
+        spellCheck={false}
         required={props.required}
         maxLength={props.maxLength}
         placeholder={props.placeholder}
