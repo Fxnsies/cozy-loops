@@ -53,6 +53,17 @@ function OrderPage() {
       setMessages(res.messages as Message[]);
     } else {
       setOrder(null);
+      try {
+        const saved: { code: string }[] = JSON.parse(
+          localStorage.getItem("cozy-loops-orders") ?? "[]",
+        );
+        localStorage.setItem(
+          "cozy-loops-orders",
+          JSON.stringify(saved.filter((o) => o.code !== code)),
+        );
+      } catch {
+        /* ignore */
+      }
     }
     setLoading(false);
   }, [code, fetchOrder]);
@@ -87,8 +98,17 @@ function OrderPage() {
         <p className="mt-10 text-muted-foreground">Loading your order…</p>
       ) : !order ? (
         <div className="card-cozy mt-8 p-8 text-center">
-          <h1 className="text-2xl font-bold">We couldn't find that order</h1>
-          <p className="mt-2 text-muted-foreground">Double-check the code «{code}» and try again.</p>
+          <h1 className="text-2xl font-bold">This order is no longer here</h1>
+          <p className="mt-2 text-muted-foreground">
+            Order «{code}» has been deleted (or the code is wrong), so we've removed it from your
+            saved list.
+          </p>
+          <Link
+            to="/"
+            className="mt-5 inline-block rounded-full bg-primary px-6 py-3 font-semibold text-primary-foreground"
+          >
+            Start a new order
+          </Link>
         </div>
       ) : (
         <>

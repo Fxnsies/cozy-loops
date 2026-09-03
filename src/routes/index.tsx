@@ -113,7 +113,7 @@ function Index() {
       ) : (
         <section className="card-cozy mt-10 p-7">
           <h2 className="text-2xl font-bold">Place an order</h2>
-          <form onSubmit={onSubmit} className="mt-5 grid gap-4">
+          <form onSubmit={onSubmit} autoComplete="off" className="mt-5 grid gap-4">
             <Field label="Your name" name="customer_name" required maxLength={80} />
             <Field
               label="Email or phone (optional)"
@@ -197,6 +197,7 @@ function Index() {
           }}
         >
           <input
+            autoComplete="off"
             value={track}
             onChange={(e) => setTrack(e.target.value)}
             placeholder="ABCD2345"
@@ -247,6 +248,9 @@ function Field(props: {
       <span className="text-sm font-semibold">{props.label}</span>
       <input
         name={props.name}
+        autoComplete="off"
+        autoCorrect="off"
+        spellCheck={false}
         required={props.required}
         maxLength={props.maxLength}
         placeholder={props.placeholder}
