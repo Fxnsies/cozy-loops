@@ -80,8 +80,42 @@ function Index() {
     <main className="mx-auto w-full max-w-3xl px-5 py-14">
       <header className="text-center">
         <p className="font-serif text-sm italic text-muted-foreground">stitched at home, one loop at a time 🧶</p>
-        <h1 className="mt-3 text-6xl font-bold text-primary">Cozy Loops</h1>
-        <p className="mx-auto mt-4 max-w-xl text-lg text-muted-foreground">
+        <div className="relative mx-auto mt-3 inline-block">
+          <h1
+            className="text-6xl font-bold tracking-tight text-primary md:text-7xl"
+            style={{ fontFamily: "'DynaPuff', cursive" }}
+          >
+            <span className="inline-block select-none transition-transform duration-300 hover:-rotate-3">C</span>
+            <span className="inline-block -translate-y-1 rotate-2 select-none transition-transform duration-300 hover:rotate-6">o</span>
+            <span className="inline-block translate-y-1 -rotate-1 select-none transition-transform duration-300 hover:-rotate-6">z</span>
+            <span className="inline-block -translate-y-1 rotate-3 select-none transition-transform duration-300 hover:rotate-12">y</span>
+            <span className="inline-block w-2 md:w-4"></span>
+            <span className="inline-block -translate-y-1 -rotate-2 select-none transition-transform duration-300 hover:-rotate-12">L</span>
+            <span className="inline-block translate-y-1 rotate-1 select-none transition-transform duration-300 hover:rotate-3">o</span>
+            <span className="inline-block -rotate-3 select-none transition-transform duration-300 hover:-rotate-6">o</span>
+            <span className="inline-block -translate-y-1 rotate-2 select-none transition-transform duration-300 hover:rotate-6">p</span>
+            <span className="inline-block translate-y-2 -rotate-1 select-none transition-transform duration-300 hover:-rotate-12">s</span>
+          </h1>
+          <div className="absolute -bottom-2 left-0 h-2 w-full opacity-40">
+            <svg
+              width="100%"
+              height="8"
+              viewBox="0 0 400 8"
+              fill="none"
+              preserveAspectRatio="none"
+              className="text-primary"
+            >
+              <path
+                d="M0 4C20 4 20 1 40 1C60 1 60 7 80 7C100 7 100 1 120 1C140 1 140 7 160 7C180 7 180 1 200 1C220 1 220 7 240 7C260 7 260 1 280 1C300 1 300 7 320 7C340 7 340 1 360 1C380 1 380 4 400 4"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeDasharray="6 6"
+              />
+            </svg>
+          </div>
+        </div>
+        <p className="mx-auto mt-6 max-w-xl text-lg text-muted-foreground">
           Little crochet things made by hand, just for you — frogs, bunnies, turtles, keychains, or
           whatever silly idea you have. No factory, no shelves. Just yarn, a hook, and a bit of time.
         </p>
