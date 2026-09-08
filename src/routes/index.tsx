@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 
+import { CornerPhotos } from "@/components/CornerPhotos";
 import { FounderMark } from "@/components/FounderMark";
 import { createOrder } from "@/lib/orders.functions";
 
@@ -78,10 +79,14 @@ function Index() {
   return (
     <main className="mx-auto w-full max-w-3xl px-5 py-14">
       <header className="text-center">
-        <p className="text-sm uppercase tracking-[0.35em] text-muted-foreground">handmade with yarn</p>
+        <p className="font-serif text-sm italic text-muted-foreground">stitched at home, one loop at a time 🧶</p>
         <h1 className="mt-3 text-6xl font-bold text-primary">Cozy Loops</h1>
         <p className="mx-auto mt-4 max-w-xl text-lg text-muted-foreground">
-          Crochet pieces made just for you — plushies, bags, sweaters, keychains, anything you can dream up.
+          Little crochet things made by hand, just for you — frogs, bunnies, turtles, keychains, or
+          whatever silly idea you have. No factory, no shelves. Just yarn, a hook, and a bit of time.
+        </p>
+        <p className="mx-auto mt-4 max-w-xl rounded-2xl border border-dashed border-primary/60 bg-card/70 px-4 py-3 font-serif text-base italic text-foreground">
+          Paying and picking up happens whenever you see me in person — no online payment, no shipping. 💛
         </p>
       </header>
 
