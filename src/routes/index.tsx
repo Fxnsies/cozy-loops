@@ -131,7 +131,7 @@ function Index() {
               name="item"
               required
               rows={4}
-              placeholder="e.g. a chunky crochet bunny plushie, about 30cm tall"
+              placeholder="Options — frog, bunny, electric turtle (images attached) or anything else you want"
             />
             <TextArea
               label="Any modifications?"
@@ -236,6 +236,7 @@ function Index() {
           Shop owner login
         </Link>
       </footer>
+      <CornerPhotos />
       <FounderMark />
     </main>
   );
