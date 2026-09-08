@@ -127,6 +127,10 @@ function OrderPage() {
                 </p>
               )}
             </div>
+            <p className="mt-3 rounded-2xl border border-dashed border-primary/60 bg-card/70 px-4 py-3 font-serif text-sm italic">
+              Paying and handing it over happens whenever you see me in person — no online payment,
+              no shipping. 💛
+            </p>
           </section>
 
           <section className="card-cozy mt-6 border-2 border-primary p-7">
