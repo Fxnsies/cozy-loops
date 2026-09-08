@@ -116,8 +116,7 @@ function Index() {
           </div>
         </div>
         <p className="mx-auto mt-6 max-w-xl text-lg text-muted-foreground">
-          Little crochet things made by hand, just for you — frogs, bunnies, turtles, keychains, or
-          whatever silly idea you have. No factory, no shelves. Just yarn, a hook, and a bit of time.
+          random designs, way too many supplies, and nothing better to do
         </p>
         <p className="mx-auto mt-4 max-w-xl rounded-2xl border border-dashed border-primary/60 bg-card/70 px-4 py-3 font-serif text-base italic text-foreground">
           Paying and picking up happens whenever you see me in person — no online payment, no shipping. 💛
