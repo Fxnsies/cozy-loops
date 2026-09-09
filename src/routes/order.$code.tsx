@@ -53,17 +53,6 @@ function OrderPage() {
       setMessages(res.messages as Message[]);
     } else {
       setOrder(null);
-      try {
-        const saved: { code: string }[] = JSON.parse(
-          localStorage.getItem("cozy-loops-orders") ?? "[]",
-        );
-        localStorage.setItem(
-          "cozy-loops-orders",
-          JSON.stringify(saved.filter((o) => o.code !== code)),
-        );
-      } catch {
-        /* ignore */
-      }
     }
     setLoading(false);
   }, [code, fetchOrder]);
@@ -100,15 +89,36 @@ function OrderPage() {
         <div className="card-cozy mt-8 p-8 text-center">
           <h1 className="text-2xl font-bold">This order is no longer here</h1>
           <p className="mt-2 text-muted-foreground">
-            Order «{code}» has been deleted (or the code is wrong), so we've removed it from your
+            Order «{code}» has been deleted (or the code is wrong). You can remove it from your
             saved list.
           </p>
-          <Link
-            to="/"
-            className="mt-5 inline-block rounded-full bg-primary px-6 py-3 font-semibold text-primary-foreground"
-          >
-            Start a new order
-          </Link>
+          <div className="mt-5 flex flex-wrap justify-center gap-3">
+            <button
+              onClick={() => {
+                try {
+                  const list: string[] = JSON.parse(
+                    localStorage.getItem("cozy-loops-orders") ?? "[]",
+                  );
+                  localStorage.setItem(
+                    "cozy-loops-orders",
+                    JSON.stringify(list.filter((c) => c !== code)),
+                  );
+                } catch {
+                  /* ignore */
+                }
+                void navigate({ to: "/" });
+              }}
+              className="rounded-full bg-destructive px-6 py-3 font-semibold text-destructive-foreground transition hover:opacity-90"
+            >
+              Remove this order from my list
+            </button>
+            <Link
+              to="/"
+              className="rounded-full bg-primary px-6 py-3 font-semibold text-primary-foreground"
+            >
+              Start a new order
+            </Link>
+          </div>
         </div>
       ) : (
         <>
