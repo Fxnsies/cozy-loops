@@ -9,6 +9,7 @@ import {
   adminListOrders,
   adminReopenConversation,
   adminReply,
+  adminSetDetail,
   adminSetHidden,
   adminSetQuote,
 } from "@/lib/orders.functions";
@@ -35,6 +36,9 @@ type Order = {
   modifications: string | null;
   stuffing: string | null;
   quote: string | null;
+  meet_location: string | null;
+  meet_date: string | null;
+  meet_time: string | null;
   status: string;
   conversation_closed: boolean;
   hidden: boolean;
