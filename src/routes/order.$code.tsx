@@ -26,6 +26,9 @@ type OrderView = {
   modifications: string | null;
   stuffing: string | null;
   quote: string | null;
+  meet_location: string | null;
+  meet_date: string | null;
+  meet_time: string | null;
   status: string;
   conversation_closed: boolean;
   created_at: string;
@@ -91,6 +94,10 @@ function OrderPage() {
           <p className="mt-2 text-muted-foreground">
             Order «{code}» has been deleted (or the code is wrong). You can remove it from your
             saved list.
+          </p>
+          <p className="mx-auto mt-4 max-w-md rounded-2xl border border-dashed border-primary/60 bg-card/70 px-4 py-3 font-serif text-sm italic">
+            Paying and picking up happens whenever you see me in person — no online payment, no
+            shipping. 💛
           </p>
           <div className="mt-5 flex flex-wrap justify-center gap-3">
             <button
