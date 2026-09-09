@@ -419,3 +419,33 @@ function OrderCard(props: {
     </section>
   );
 }
+
+function DetailField(props: {
+  label: string;
+  placeholder: string;
+  initial: string;
+  onSave: (value: string) => Promise<void>;
+}) {
+  const [value, setValue] = useState(props.initial);
+  return (
+    <form
+      className="mt-3 flex flex-wrap items-center gap-3"
+      onSubmit={async (e) => {
+        e.preventDefault();
+        await props.onSave(value);
+      }}
+    >
+      <span className="w-20 text-sm font-semibold">{props.label}</span>
+      <input
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        placeholder={props.placeholder}
+        maxLength={200}
+        className="flex-1 rounded-2xl border border-input bg-background px-4 py-2 outline-none focus:ring-2 focus:ring-ring"
+      />
+      <button className="rounded-full border border-border px-5 py-2 font-semibold transition hover:bg-muted">
+        Save
+      </button>
+    </form>
+  );
+}
