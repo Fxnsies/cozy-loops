@@ -216,6 +216,10 @@ function OrderCard(props: {
   order: Order;
   messages: Message[];
   onQuote: (quote: string) => Promise<void>;
+  onDetail: (
+    field: "meet_location" | "meet_date" | "meet_time",
+    value: string,
+  ) => Promise<void>;
   onReply: (body: string) => Promise<void>;
   onEnd: () => Promise<void>;
   onReopen: () => Promise<void>;
@@ -272,6 +276,26 @@ function OrderCard(props: {
           Save price
         </button>
       </form>
+
+      <DetailField
+        label="Location"
+        placeholder="Where you'll meet, e.g. school gate"
+        initial={order.meet_location ?? ""}
+        onSave={(v) => props.onDetail("meet_location", v)}
+      />
+      <DetailField
+        label="Date"
+        placeholder="e.g. Saturday 14 Sep"
+        initial={order.meet_date ?? ""}
+        onSave={(v) => props.onDetail("meet_date", v)}
+      />
+      <DetailField
+        label="Time"
+        placeholder="e.g. 4:30 pm"
+        initial={order.meet_time ?? ""}
+        onSave={(v) => props.onDetail("meet_time", v)}
+      />
+
 
       <ul className="mt-5 grid gap-2">
         {messages.map((m) =>
