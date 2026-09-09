@@ -30,6 +30,13 @@ const adminQuoteInput = z.object({
   quote: z.string().trim().max(200),
 });
 
+const adminDetailInput = z.object({
+  passcode: z.string().min(1).max(200),
+  order_id: z.string().uuid(),
+  field: z.enum(["meet_location", "meet_date", "meet_time"]),
+  value: z.string().trim().max(200),
+});
+
 const adminCloseInput = z.object({
   passcode: z.string().min(1).max(200),
   order_id: z.string().uuid(),
@@ -86,7 +93,9 @@ export const getOrder = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: order } = await supabaseAdmin
       .from("orders")
-      .select("id, code, customer_name, item, modifications, stuffing, quote, status, conversation_closed, created_at")
+      .select(
+        "id, code, customer_name, item, modifications, stuffing, quote, meet_location, meet_date, meet_time, status, conversation_closed, created_at",
+      )
       .eq("code", data.code.toUpperCase())
       .maybeSingle();
     if (!order) return null;
