@@ -132,6 +132,10 @@ function Index() {
             💬 Your price and updates arrive in the chat on your order page — the wait time is a
             minimum of 5 minutes and at most a day.
           </p>
+          <p className="mx-auto mt-4 max-w-md rounded-2xl border border-dashed border-primary/60 bg-card/70 px-4 py-3 font-serif text-sm italic">
+            Paying and picking up happens whenever you see me in person — no online payment, no
+            shipping. 💛
+          </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             <Link
               to="/order/$code"
