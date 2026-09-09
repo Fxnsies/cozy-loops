@@ -275,3 +275,42 @@ export const customerDeleteOrder = createServerFn({ method: "POST" })
     if (error) throw new Error("Could not delete this order.");
     return { ok: true };
   });
+
+const detailLabels: Record<string, string> = {
+  meet_location: "Location",
+  meet_date: "Date",
+  meet_time: "Time",
+};
+
+export const adminSetDetail = createServerFn({ method: "POST" })
+  .inputValidator((data: unknown) => adminDetailInput.parse(data))
+  .handler(async ({ data }) => {
+    checkPasscode(data.passcode);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: existing } = await supabaseAdmin
+      .from("orders")
+      .select("meet_location, meet_date, meet_time")
+      .eq("id", data.order_id)
+      .maybeSingle();
+    const previous = (existing as Record<string, string | null> | null)?.[data.field] ?? null;
+    const next = data.value || null;
+    const { error } = await supabaseAdmin
+      .from("orders")
+      .update({ [data.field]: next })
+      .eq("id", data.order_id);
+    if (error) throw new Error("Could not save this detail.");
+
+    if (previous !== next) {
+      const label = detailLabels[data.field] ?? "Detail";
+      const notice =
+        next === null
+          ? `${label} removed — we'll share an updated one soon.`
+          : previous
+            ? `${label} updated: ${previous} → ${next}`
+            : `${label} set: ${next}`;
+      await supabaseAdmin
+        .from("order_messages")
+        .insert({ order_id: data.order_id, sender: "system", body: notice });
+    }
+    return { ok: true, changed: previous !== next };
+  });
