@@ -54,6 +54,7 @@ function AdminPage() {
   const reopenConversation = useServerFn(adminReopenConversation);
   const setHidden = useServerFn(adminSetHidden);
   const deleteOrder = useServerFn(adminDeleteOrder);
+  const setDetail = useServerFn(adminSetDetail);
 
   const [passcode, setPasscode] = useState("");
   const [showPass, setShowPass] = useState(false);
@@ -178,6 +179,10 @@ function AdminPage() {
             messages={messages.filter((m) => m.order_id === order.id)}
             onQuote={async (quote) => {
               await setQuote({ data: { passcode, order_id: order.id, quote } });
+              await load(passcode);
+            }}
+            onDetail={async (field, value) => {
+              await setDetail({ data: { passcode, order_id: order.id, field, value } });
               await load(passcode);
             }}
             onReply={async (body) => {
