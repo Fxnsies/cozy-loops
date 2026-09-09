@@ -30,6 +30,13 @@ const adminQuoteInput = z.object({
   quote: z.string().trim().max(200),
 });
 
+const adminDetailInput = z.object({
+  passcode: z.string().min(1).max(200),
+  order_id: z.string().uuid(),
+  field: z.enum(["meet_location", "meet_date", "meet_time"]),
+  value: z.string().trim().max(200),
+});
+
 const adminCloseInput = z.object({
   passcode: z.string().min(1).max(200),
   order_id: z.string().uuid(),
@@ -86,7 +93,9 @@ export const getOrder = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: order } = await supabaseAdmin
       .from("orders")
-      .select("id, code, customer_name, item, modifications, stuffing, quote, status, conversation_closed, created_at")
+      .select(
+        "id, code, customer_name, item, modifications, stuffing, quote, meet_location, meet_date, meet_time, status, conversation_closed, created_at",
+      )
       .eq("code", data.code.toUpperCase())
       .maybeSingle();
     if (!order) return null;
@@ -265,4 +274,49 @@ export const customerDeleteOrder = createServerFn({ method: "POST" })
     const { error } = await supabaseAdmin.from("orders").delete().eq("id", order.id);
     if (error) throw new Error("Could not delete this order.");
     return { ok: true };
+  });
+
+const detailLabels: Record<string, string> = {
+  meet_location: "Location",
+  meet_date: "Date",
+  meet_time: "Time",
+};
+
+export const adminSetDetail = createServerFn({ method: "POST" })
+  .inputValidator((data: unknown) => adminDetailInput.parse(data))
+  .handler(async ({ data }) => {
+    checkPasscode(data.passcode);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: existing } = await supabaseAdmin
+      .from("orders")
+      .select("meet_location, meet_date, meet_time")
+      .eq("id", data.order_id)
+      .maybeSingle();
+    const previous = (existing as Record<string, string | null> | null)?.[data.field] ?? null;
+    const next = data.value || null;
+    const { error } = await supabaseAdmin
+      .from("orders")
+      .update(
+        (data.field === "meet_location"
+          ? { meet_location: next }
+          : data.field === "meet_date"
+            ? { meet_date: next }
+            : { meet_time: next }) as never,
+      )
+      .eq("id", data.order_id);
+    if (error) throw new Error("Could not save this detail.");
+
+    if (previous !== next) {
+      const label = detailLabels[data.field] ?? "Detail";
+      const notice =
+        next === null
+          ? `${label} removed — we'll share an updated one soon.`
+          : previous
+            ? `${label} updated: ${previous} → ${next}`
+            : `${label} set: ${next}`;
+      await supabaseAdmin
+        .from("order_messages")
+        .insert({ order_id: data.order_id, sender: "system", body: notice });
+    }
+    return { ok: true, changed: previous !== next };
   });

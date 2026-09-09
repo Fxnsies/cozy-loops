@@ -26,6 +26,9 @@ type OrderView = {
   modifications: string | null;
   stuffing: string | null;
   quote: string | null;
+  meet_location: string | null;
+  meet_date: string | null;
+  meet_time: string | null;
   status: string;
   conversation_closed: boolean;
   created_at: string;
@@ -92,6 +95,10 @@ function OrderPage() {
             Order «{code}» has been deleted (or the code is wrong). You can remove it from your
             saved list.
           </p>
+          <p className="mx-auto mt-4 max-w-md rounded-2xl border border-dashed border-primary/60 bg-card/70 px-4 py-3 font-serif text-sm italic">
+            Paying and picking up happens whenever you see me in person — no online payment, no
+            shipping. 💛
+          </p>
           <div className="mt-5 flex flex-wrap justify-center gap-3">
             <button
               onClick={() => {
@@ -112,12 +119,6 @@ function OrderPage() {
             >
               Remove this order from my list
             </button>
-            <Link
-              to="/"
-              className="rounded-full bg-primary px-6 py-3 font-semibold text-primary-foreground"
-            >
-              Start a new order
-            </Link>
           </div>
         </div>
       ) : (
@@ -127,19 +128,32 @@ function OrderPage() {
             <p className="mt-1 text-sm text-muted-foreground">
               Placed by {order.customer_name} on {new Date(order.created_at).toLocaleDateString()}
             </p>
-            <div className="mt-4 rounded-2xl bg-accent/60 px-5 py-4">
-              {order.quote ? (
-                <p className="text-lg font-bold text-accent-foreground">Your price: {order.quote}</p>
-              ) : (
-                <p className="text-sm text-accent-foreground">
-                  We're working out your price — the wait time is a minimum of 5 minutes and at most
-                  a day.
-                </p>
-              )}
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              {(
+                [
+                  ["Price", order.quote],
+                  ["Location", order.meet_location],
+                  ["Date", order.meet_date],
+                  ["Time", order.meet_time],
+                ] as const
+              ).map(([label, value]) => (
+                <div key={label} className="rounded-2xl bg-accent/60 px-5 py-4">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-accent-foreground/70">
+                    {label}
+                  </p>
+                  <p className="mt-1 text-lg font-bold text-accent-foreground">{value || "—"}</p>
+                  {!value && (
+                    <p className="mt-1 text-xs text-accent-foreground">
+                      Still being worked out — the wait time is a minimum of 5 minutes and at most a
+                      day.
+                    </p>
+                  )}
+                </div>
+              ))}
             </div>
             <p className="mt-3 rounded-2xl border border-dashed border-primary/60 bg-card/70 px-4 py-3 font-serif text-sm italic">
-              Paying and handing it over happens whenever you see me in person — no online payment,
-              no shipping. 💛
+              Paying and picking up happens whenever you see me in person — no online payment, no
+              shipping. 💛
             </p>
           </section>
 

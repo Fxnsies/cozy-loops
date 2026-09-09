@@ -56,6 +56,9 @@ export type Database = {
           hidden: boolean
           id: string
           item: string
+          meet_date: string | null
+          meet_location: string | null
+          meet_time: string | null
           modifications: string | null
           quote: string | null
           status: string
@@ -70,6 +73,9 @@ export type Database = {
           hidden?: boolean
           id?: string
           item: string
+          meet_date?: string | null
+          meet_location?: string | null
+          meet_time?: string | null
           modifications?: string | null
           quote?: string | null
           status?: string
@@ -84,6 +90,9 @@ export type Database = {
           hidden?: boolean
           id?: string
           item?: string
+          meet_date?: string | null
+          meet_location?: string | null
+          meet_time?: string | null
           modifications?: string | null
           quote?: string | null
           status?: string

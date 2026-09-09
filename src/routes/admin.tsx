@@ -9,6 +9,7 @@ import {
   adminListOrders,
   adminReopenConversation,
   adminReply,
+  adminSetDetail,
   adminSetHidden,
   adminSetQuote,
 } from "@/lib/orders.functions";
@@ -35,6 +36,9 @@ type Order = {
   modifications: string | null;
   stuffing: string | null;
   quote: string | null;
+  meet_location: string | null;
+  meet_date: string | null;
+  meet_time: string | null;
   status: string;
   conversation_closed: boolean;
   hidden: boolean;
@@ -50,6 +54,7 @@ function AdminPage() {
   const reopenConversation = useServerFn(adminReopenConversation);
   const setHidden = useServerFn(adminSetHidden);
   const deleteOrder = useServerFn(adminDeleteOrder);
+  const setDetail = useServerFn(adminSetDetail);
 
   const [passcode, setPasscode] = useState("");
   const [showPass, setShowPass] = useState(false);
@@ -176,6 +181,10 @@ function AdminPage() {
               await setQuote({ data: { passcode, order_id: order.id, quote } });
               await load(passcode);
             }}
+            onDetail={async (field, value) => {
+              await setDetail({ data: { passcode, order_id: order.id, field, value } });
+              await load(passcode);
+            }}
             onReply={async (body) => {
               await reply({ data: { passcode, order_id: order.id, body } });
               await load(passcode);
@@ -207,6 +216,10 @@ function OrderCard(props: {
   order: Order;
   messages: Message[];
   onQuote: (quote: string) => Promise<void>;
+  onDetail: (
+    field: "meet_location" | "meet_date" | "meet_time",
+    value: string,
+  ) => Promise<void>;
   onReply: (body: string) => Promise<void>;
   onEnd: () => Promise<void>;
   onReopen: () => Promise<void>;
@@ -263,6 +276,26 @@ function OrderCard(props: {
           Save price
         </button>
       </form>
+
+      <DetailField
+        label="Location"
+        placeholder="Where you'll meet, e.g. school gate"
+        initial={order.meet_location ?? ""}
+        onSave={(v) => props.onDetail("meet_location", v)}
+      />
+      <DetailField
+        label="Date"
+        placeholder="e.g. Saturday 14 Sep"
+        initial={order.meet_date ?? ""}
+        onSave={(v) => props.onDetail("meet_date", v)}
+      />
+      <DetailField
+        label="Time"
+        placeholder="e.g. 4:30 pm"
+        initial={order.meet_time ?? ""}
+        onSave={(v) => props.onDetail("meet_time", v)}
+      />
+
 
       <ul className="mt-5 grid gap-2">
         {messages.map((m) =>
@@ -384,5 +417,35 @@ function OrderCard(props: {
         )}
       </div>
     </section>
+  );
+}
+
+function DetailField(props: {
+  label: string;
+  placeholder: string;
+  initial: string;
+  onSave: (value: string) => Promise<void>;
+}) {
+  const [value, setValue] = useState(props.initial);
+  return (
+    <form
+      className="mt-3 flex flex-wrap items-center gap-3"
+      onSubmit={async (e) => {
+        e.preventDefault();
+        await props.onSave(value);
+      }}
+    >
+      <span className="w-20 text-sm font-semibold">{props.label}</span>
+      <input
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        placeholder={props.placeholder}
+        maxLength={200}
+        className="flex-1 rounded-2xl border border-input bg-background px-4 py-2 outline-none focus:ring-2 focus:ring-ring"
+      />
+      <button className="rounded-full border border-border px-5 py-2 font-semibold transition hover:bg-muted">
+        Save
+      </button>
+    </form>
   );
 }
