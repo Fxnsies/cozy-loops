@@ -53,17 +53,6 @@ function OrderPage() {
       setMessages(res.messages as Message[]);
     } else {
       setOrder(null);
-      try {
-        const saved: { code: string }[] = JSON.parse(
-          localStorage.getItem("cozy-loops-orders") ?? "[]",
-        );
-        localStorage.setItem(
-          "cozy-loops-orders",
-          JSON.stringify(saved.filter((o) => o.code !== code)),
-        );
-      } catch {
-        /* ignore */
-      }
     }
     setLoading(false);
   }, [code, fetchOrder]);
