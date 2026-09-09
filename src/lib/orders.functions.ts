@@ -296,7 +296,13 @@ export const adminSetDetail = createServerFn({ method: "POST" })
     const next = data.value || null;
     const { error } = await supabaseAdmin
       .from("orders")
-      .update({ [data.field]: next })
+      .update(
+        (data.field === "meet_location"
+          ? { meet_location: next }
+          : data.field === "meet_date"
+            ? { meet_date: next }
+            : { meet_time: next }) as never,
+      )
       .eq("id", data.order_id);
     if (error) throw new Error("Could not save this detail.");
 
