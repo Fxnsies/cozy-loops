@@ -7,22 +7,35 @@ const orderInput = z.object({
   item: z.string().trim().min(1).max(1000),
   modifications: z.string().trim().max(1000).optional().default(""),
   stuffing: z.string().trim().max(200).optional().default(""),
+  tutorial_url: z.string().trim().max(500).optional().default(""),
 });
+
+const imageInput = z
+  .string()
+  .max(7_000_000)
+  .regex(/^data:image\/(png|jpe?g|gif|webp);base64,/)
+  .optional();
 
 const codeInput = z.object({ code: z.string().trim().min(4).max(20) });
 
-const messageInput = z.object({
-  code: z.string().trim().min(4).max(20),
-  body: z.string().trim().min(1).max(1000),
-});
+const messageInput = z
+  .object({
+    code: z.string().trim().min(4).max(20),
+    body: z.string().trim().max(1000).optional().default(""),
+    image: imageInput,
+  })
+  .refine((v) => Boolean(v.body || v.image), { message: "Empty message" });
 
 const adminInput = z.object({ passcode: z.string().min(1).max(200) });
 
-const adminReplyInput = z.object({
-  passcode: z.string().min(1).max(200),
-  order_id: z.string().uuid(),
-  body: z.string().trim().min(1).max(1000),
-});
+const adminReplyInput = z
+  .object({
+    passcode: z.string().min(1).max(200),
+    order_id: z.string().uuid(),
+    body: z.string().trim().max(1000).optional().default(""),
+    image: imageInput,
+  })
+  .refine((v) => Boolean(v.body || v.image), { message: "Empty message" });
 
 const adminQuoteInput = z.object({
   passcode: z.string().min(1).max(200),
@@ -70,6 +83,38 @@ function checkPasscode(passcode: string) {
   }
 }
 
+type AdminClient = (typeof import("@/integrations/supabase/client.server"))["supabaseAdmin"];
+
+async function uploadChatImage(supabaseAdmin: AdminClient, orderId: string, dataUrl: string) {
+  const match = /^data:(image\/[a-z+]+);base64,(.+)$/i.exec(dataUrl);
+  if (!match) throw new Error("That image could not be read.");
+  const mime = match[1]!;
+  const bytes = Uint8Array.from(atob(match[2]!), (c) => c.charCodeAt(0));
+  if (bytes.length > 5_000_000) throw new Error("That image is too big (max 5 MB).");
+  const ext = mime.split("/")[1]!.replace("jpeg", "jpg");
+  const path = `${orderId}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+  const { error } = await supabaseAdmin.storage
+    .from("chat-images")
+    .upload(path, new Blob([bytes as BlobPart], { type: mime }), { contentType: mime });
+  if (error) throw new Error("The image could not be uploaded.");
+  return path;
+}
+
+async function withSignedImages<T extends { image_url?: string | null }>(
+  supabaseAdmin: AdminClient,
+  messages: T[],
+): Promise<T[]> {
+  const paths = messages.map((m) => m.image_url).filter((p): p is string => Boolean(p));
+  if (paths.length === 0) return messages;
+  const { data: signed } = await supabaseAdmin.storage
+    .from("chat-images")
+    .createSignedUrls(paths, 60 * 60 * 6);
+  const map = new Map((signed ?? []).map((s) => [s.path ?? "", s.signedUrl]));
+  return messages.map((m) =>
+    m.image_url ? { ...m, image_url: map.get(m.image_url) ?? null } : m,
+  );
+}
+
 export const createOrder = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => orderInput.parse(data))
   .handler(async ({ data }) => {
@@ -82,6 +127,7 @@ export const createOrder = createServerFn({ method: "POST" })
       item: data.item,
       modifications: data.modifications || null,
       stuffing: data.stuffing || null,
+      tutorial_url: data.tutorial_url || null,
     });
     if (error) throw new Error("Could not place the order. Please try again.");
     return { code };
@@ -94,18 +140,21 @@ export const getOrder = createServerFn({ method: "POST" })
     const { data: order } = await supabaseAdmin
       .from("orders")
       .select(
-        "id, code, customer_name, item, modifications, stuffing, quote, meet_location, meet_date, meet_time, status, conversation_closed, created_at",
+        "id, code, customer_name, item, modifications, stuffing, tutorial_url, quote, meet_location, meet_date, meet_time, status, conversation_closed, created_at",
       )
       .eq("code", data.code.toUpperCase())
       .maybeSingle();
     if (!order) return null;
     const { data: messages } = await supabaseAdmin
       .from("order_messages")
-      .select("id, sender, body, created_at")
+      .select("id, sender, body, image_url, created_at")
       .eq("order_id", order.id)
       .order("created_at", { ascending: true });
     const { id: _id, ...publicOrder } = order;
-    return { order: publicOrder, messages: messages ?? [] };
+    return {
+      order: publicOrder,
+      messages: await withSignedImages(supabaseAdmin, messages ?? []),
+    };
   });
 
 export const sendCustomerMessage = createServerFn({ method: "POST" })
@@ -119,9 +168,10 @@ export const sendCustomerMessage = createServerFn({ method: "POST" })
       .maybeSingle();
     if (!order) throw new Error("Order not found");
     if (order.conversation_closed) throw new Error("This conversation has been closed.");
+    const imagePath = data.image ? await uploadChatImage(supabaseAdmin, order.id, data.image) : null;
     const { error } = await supabaseAdmin
       .from("order_messages")
-      .insert({ order_id: order.id, sender: "customer", body: data.body });
+      .insert({ order_id: order.id, sender: "customer", body: data.body, image_url: imagePath });
     if (error) throw new Error("Could not send the message.");
     return { ok: true };
   });
@@ -137,9 +187,12 @@ export const adminListOrders = createServerFn({ method: "POST" })
       .order("created_at", { ascending: false });
     const { data: messages } = await supabaseAdmin
       .from("order_messages")
-      .select("id, order_id, sender, body, created_at")
+      .select("id, order_id, sender, body, image_url, created_at")
       .order("created_at", { ascending: true });
-    return { orders: orders ?? [], messages: messages ?? [] };
+    return {
+      orders: orders ?? [],
+      messages: await withSignedImages(supabaseAdmin, messages ?? []),
+    };
   });
 
 export const adminReply = createServerFn({ method: "POST" })
@@ -147,9 +200,12 @@ export const adminReply = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     checkPasscode(data.passcode);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const imagePath = data.image
+      ? await uploadChatImage(supabaseAdmin, data.order_id, data.image)
+      : null;
     const { error } = await supabaseAdmin
       .from("order_messages")
-      .insert({ order_id: data.order_id, sender: "shop", body: data.body });
+      .insert({ order_id: data.order_id, sender: "shop", body: data.body, image_url: imagePath });
     if (error) throw new Error("Could not send the reply.");
     return { ok: true };
   });
