@@ -83,15 +83,9 @@ function checkPasscode(passcode: string) {
   }
 }
 
-type AdminClient = Awaited<
-  ReturnType<typeof import("@/integrations/supabase/client.server")["default"]>
->;
+type AdminClient = (typeof import("@/integrations/supabase/client.server"))["supabaseAdmin"];
 
-async function uploadChatImage(
-  supabaseAdmin: { storage: { from: (b: string) => { upload: (p: string, f: Blob, o?: unknown) => Promise<{ error: unknown }> } } },
-  orderId: string,
-  dataUrl: string,
-) {
+async function uploadChatImage(supabaseAdmin: AdminClient, orderId: string, dataUrl: string) {
   const match = /^data:(image\/[a-z+]+);base64,(.+)$/i.exec(dataUrl);
   if (!match) throw new Error("That image could not be read.");
   const mime = match[1]!;
@@ -101,22 +95,13 @@ async function uploadChatImage(
   const path = `${orderId}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
   const { error } = await supabaseAdmin.storage
     .from("chat-images")
-    .upload(path, new Blob([bytes], { type: mime }), { contentType: mime });
+    .upload(path, new Blob([bytes as BlobPart], { type: mime }), { contentType: mime });
   if (error) throw new Error("The image could not be uploaded.");
   return path;
 }
 
 async function withSignedImages<T extends { image_url?: string | null }>(
-  supabaseAdmin: {
-    storage: {
-      from: (b: string) => {
-        createSignedUrls: (
-          paths: string[],
-          expiresIn: number,
-        ) => Promise<{ data: { path?: string | null; signedUrl: string }[] | null }>;
-      };
-    };
-  },
+  supabaseAdmin: AdminClient,
   messages: T[],
 ): Promise<T[]> {
   const paths = messages.map((m) => m.image_url).filter((p): p is string => Boolean(p));
