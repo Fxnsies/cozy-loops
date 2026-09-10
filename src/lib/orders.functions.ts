@@ -7,7 +7,14 @@ const orderInput = z.object({
   item: z.string().trim().min(1).max(1000),
   modifications: z.string().trim().max(1000).optional().default(""),
   stuffing: z.string().trim().max(200).optional().default(""),
+  tutorial_url: z.string().trim().max(500).optional().default(""),
 });
+
+const imageInput = z
+  .string()
+  .max(7_000_000)
+  .regex(/^data:image\/(png|jpe?g|gif|webp);base64,/)
+  .optional();
 
 const codeInput = z.object({ code: z.string().trim().min(4).max(20) });
 
