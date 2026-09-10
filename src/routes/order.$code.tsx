@@ -128,28 +128,37 @@ function OrderPage() {
             <p className="mt-1 text-sm text-muted-foreground">
               Placed by {order.customer_name} on {new Date(order.created_at).toLocaleDateString()}
             </p>
-            <div className="mt-4 grid gap-3 sm:grid-cols-2">
-              {(
-                [
-                  ["Price", order.quote],
-                  ["Location", order.meet_location],
-                  ["Date", order.meet_date],
-                  ["Time", order.meet_time],
-                ] as const
-              ).map(([label, value]) => (
-                <div key={label} className="rounded-2xl bg-accent/60 px-5 py-4">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-accent-foreground/70">
-                    {label}
+            <div className="card-cozy mt-5 overflow-hidden">
+              <div className="bg-primary/10 px-5 py-4">
+                <p className="text-sm font-semibold text-primary">Price</p>
+                <p className="mt-1 font-display text-2xl font-bold text-foreground">
+                  {order.quote || "—"}
+                </p>
+                {!order.quote && (
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Not set yet — check back soon.
                   </p>
-                  <p className="mt-1 text-lg font-bold text-accent-foreground">{value || "—"}</p>
-                  {!value && (
-                    <p className="mt-1 text-xs text-accent-foreground">
-                      Still being worked out — the wait time is a minimum of 5 minutes and at most a
-                      day.
+                )}
+              </div>
+              <div className="grid divide-y divide-border sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+                {(
+                  [
+                    ["Location", order.meet_location, "Where we'll meet"],
+                    ["Date", order.meet_date, "When we'll meet"],
+                    ["Time", order.meet_time, "What time"],
+                  ] as const
+                ).map(([label, value, hint]) => (
+                  <div key={label} className="px-5 py-4">
+                    <p className="text-sm font-semibold text-muted-foreground">{label}</p>
+                    <p className="mt-1 font-semibold text-foreground">
+                      {value || "Not set yet"}
                     </p>
-                  )}
-                </div>
-              ))}
+                    {!value && (
+                      <p className="mt-1 text-xs text-muted-foreground">{hint} — check back soon.</p>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
             <p className="mt-3 rounded-2xl border border-dashed border-primary/60 bg-card/70 px-4 py-3 font-serif text-sm italic">
               Paying and picking up happens whenever you see me in person — no online payment, no
