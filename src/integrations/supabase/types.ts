@@ -19,13 +19,15 @@ export type Database = {
           body: string
           created_at: string
           id: string
+          image_url: string | null
           order_id: string
           sender: string
         }
         Insert: {
-          body: string
+          body?: string
           created_at?: string
           id?: string
+          image_url?: string | null
           order_id: string
           sender: string
         }
@@ -33,6 +35,7 @@ export type Database = {
           body?: string
           created_at?: string
           id?: string
+          image_url?: string | null
           order_id?: string
           sender?: string
         }
@@ -63,6 +66,7 @@ export type Database = {
           quote: string | null
           status: string
           stuffing: string | null
+          tutorial_url: string | null
         }
         Insert: {
           code: string
@@ -80,6 +84,7 @@ export type Database = {
           quote?: string | null
           status?: string
           stuffing?: string | null
+          tutorial_url?: string | null
         }
         Update: {
           code?: string
@@ -97,6 +102,7 @@ export type Database = {
           quote?: string | null
           status?: string
           stuffing?: string | null
+          tutorial_url?: string | null
         }
         Relationships: []
       }
