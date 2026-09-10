@@ -18,18 +18,24 @@ const imageInput = z
 
 const codeInput = z.object({ code: z.string().trim().min(4).max(20) });
 
-const messageInput = z.object({
-  code: z.string().trim().min(4).max(20),
-  body: z.string().trim().min(1).max(1000),
-});
+const messageInput = z
+  .object({
+    code: z.string().trim().min(4).max(20),
+    body: z.string().trim().max(1000).optional().default(""),
+    image: imageInput,
+  })
+  .refine((v) => Boolean(v.body || v.image), { message: "Empty message" });
 
 const adminInput = z.object({ passcode: z.string().min(1).max(200) });
 
-const adminReplyInput = z.object({
-  passcode: z.string().min(1).max(200),
-  order_id: z.string().uuid(),
-  body: z.string().trim().min(1).max(1000),
-});
+const adminReplyInput = z
+  .object({
+    passcode: z.string().min(1).max(200),
+    order_id: z.string().uuid(),
+    body: z.string().trim().max(1000).optional().default(""),
+    image: imageInput,
+  })
+  .refine((v) => Boolean(v.body || v.image), { message: "Empty message" });
 
 const adminQuoteInput = z.object({
   passcode: z.string().min(1).max(200),
