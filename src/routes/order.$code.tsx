@@ -154,7 +154,7 @@ function OrderPage() {
                       {value || "Not set yet"}
                     </p>
                     {!value && (
-                      <p className="mt-1 text-xs text-muted-foreground">{hint} — check back soon.</p>
+                      <p className="mt-1 text-xs text-muted-foreground">{hint}</p>
                     )}
                   </div>
                 ))}
