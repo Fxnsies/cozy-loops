@@ -2,7 +2,9 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useCallback, useEffect, useState } from "react";
 
+import { ChatMessageBody, LinkedText } from "@/components/ChatMessageBody";
 import { FounderMark } from "@/components/FounderMark";
+import { fileToDataUrl } from "@/lib/image-file";
 import { customerDeleteOrder, getOrder, sendCustomerMessage } from "@/lib/orders.functions";
 
 export const Route = createFileRoute("/order/$code")({
@@ -18,13 +20,20 @@ export const Route = createFileRoute("/order/$code")({
   component: OrderPage,
 });
 
-type Message = { id: string; sender: string; body: string; created_at: string };
+type Message = {
+  id: string;
+  sender: string;
+  body: string;
+  image_url: string | null;
+  created_at: string;
+};
 type OrderView = {
   code: string;
   customer_name: string;
   item: string;
   modifications: string | null;
   stuffing: string | null;
+  tutorial_url: string | null;
   quote: string | null;
   meet_location: string | null;
   meet_date: string | null;
@@ -45,6 +54,8 @@ function OrderPage() {
   const [order, setOrder] = useState<OrderView | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [draft, setDraft] = useState("");
+  const [image, setImage] = useState<string | null>(null);
+  const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
   const [deleteStep, setDeleteStep] = useState<0 | 1>(0);
   const [deleteError, setDeleteError] = useState("");
@@ -69,14 +80,18 @@ function OrderPage() {
   async function onSend(e: React.FormEvent) {
     e.preventDefault();
     const body = draft.trim();
-    if (!body) return;
+    if (!body && !image) return;
     setError("");
+    setSending(true);
     try {
-      await sendMessage({ data: { code, body } });
+      await sendMessage({ data: { code, body, image: image ?? undefined } });
       setDraft("");
+      setImage(null);
       await load();
     } catch {
       setError("Message could not be sent.");
+    } finally {
+      setSending(false);
     }
   }
 
@@ -195,7 +210,7 @@ function OrderPage() {
                     }
                   >
                     <p className="text-xs opacity-70">{m.sender === "shop" ? "Cozy Loops" : "You"}</p>
-                    <p className="mt-1 whitespace-pre-wrap">{m.body}</p>
+                    <ChatMessageBody body={m.body} imageUrl={m.image_url} />
                   </li>
                 ),
               )}
@@ -212,12 +227,52 @@ function OrderPage() {
                   onChange={(e) => setDraft(e.target.value)}
                   rows={3}
                   maxLength={1000}
-                  placeholder="Write back to Cozy Loops…"
+                  placeholder="Write back to Cozy Loops… you can paste a link here too"
                   className="rounded-2xl border border-input bg-background px-4 py-3 outline-none focus:ring-2 focus:ring-ring"
                 />
+                <div className="flex flex-wrap items-center gap-3">
+                  <label className="cursor-pointer rounded-full border border-border px-4 py-2 text-sm font-semibold transition hover:bg-muted">
+                    📷 Add a photo
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        e.target.value = "";
+                        if (!file) return;
+                        setError("");
+                        try {
+                          setImage(await fileToDataUrl(file));
+                        } catch {
+                          setError("That photo could not be read.");
+                        }
+                      }}
+                    />
+                  </label>
+                  {image && (
+                    <span className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <img
+                        src={image}
+                        alt="Photo ready to send"
+                        className="h-10 w-10 rounded-lg object-cover"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setImage(null)}
+                        className="underline underline-offset-2"
+                      >
+                        remove
+                      </button>
+                    </span>
+                  )}
+                </div>
                 {error && <p className="text-sm text-destructive">{error}</p>}
-                <button className="justify-self-start rounded-full bg-primary px-6 py-3 font-semibold text-primary-foreground transition hover:opacity-90">
-                  Send message
+                <button
+                  disabled={sending}
+                  className="justify-self-start rounded-full bg-primary px-6 py-3 font-semibold text-primary-foreground transition hover:opacity-90 disabled:opacity-60"
+                >
+                  {sending ? "Sending…" : "Send message"}
                 </button>
               </form>
             )}
@@ -240,6 +295,14 @@ function OrderPage() {
                 <div>
                   <dt className="text-sm font-semibold">Cotton stuffing</dt>
                   <dd className="mt-1 whitespace-pre-wrap text-muted-foreground">{order.stuffing}</dd>
+                </div>
+              )}
+              {order.tutorial_url && (
+                <div>
+                  <dt className="text-sm font-semibold">Tutorial link</dt>
+                  <dd className="text-muted-foreground">
+                    <LinkedText text={order.tutorial_url} />
+                  </dd>
                 </div>
               )}
             </dl>
