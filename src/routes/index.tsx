@@ -55,6 +55,7 @@ function Index() {
           contact: String(form.get("contact") ?? ""),
           item: String(form.get("item") ?? ""),
           modifications: String(form.get("modifications") ?? ""),
+          tutorial_url: String(form.get("tutorial_url") ?? ""),
           stuffing:
             stuffed === "yes"
               ? `Yes — ${String(form.get("stuffing_amount") ?? "").trim() || "amount not specified"}`
@@ -175,6 +176,12 @@ function Index() {
               name="modifications"
               rows={4}
               placeholder="colours, size changes, initials, extra details…"
+            />
+            <Field
+              label="Tutorial URL? (optional)"
+              name="tutorial_url"
+              maxLength={500}
+              placeholder="paste a link to a pattern or video you like"
             />
 
             <fieldset className="grid gap-3 rounded-2xl border border-input px-4 py-4">
