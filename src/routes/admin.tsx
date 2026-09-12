@@ -13,6 +13,8 @@ import {
   adminSetHidden,
   adminSetQuote,
 } from "@/lib/orders.functions";
+import { ChatMessageBody, LinkedText } from "@/components/ChatMessageBody";
+import { fileToDataUrl } from "@/lib/image-file";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -35,6 +37,7 @@ type Order = {
   item: string;
   modifications: string | null;
   stuffing: string | null;
+  tutorial_url: string | null;
   quote: string | null;
   meet_location: string | null;
   meet_date: string | null;
@@ -44,7 +47,14 @@ type Order = {
   hidden: boolean;
   created_at: string;
 };
-type Message = { id: string; order_id: string; sender: string; body: string; created_at: string };
+type Message = {
+  id: string;
+  order_id: string;
+  sender: string;
+  body: string;
+  image_url: string | null;
+  created_at: string;
+};
 
 function AdminPage() {
   const list = useServerFn(adminListOrders);
@@ -185,8 +195,8 @@ function AdminPage() {
               await setDetail({ data: { passcode, order_id: order.id, field, value } });
               await load(passcode);
             }}
-            onReply={async (body) => {
-              await reply({ data: { passcode, order_id: order.id, body } });
+            onReply={async (body, image) => {
+              await reply({ data: { passcode, order_id: order.id, body, image } });
               await load(passcode);
             }}
             onEnd={async () => {
@@ -220,7 +230,7 @@ function OrderCard(props: {
     field: "meet_location" | "meet_date" | "meet_time",
     value: string,
   ) => Promise<void>;
-  onReply: (body: string) => Promise<void>;
+  onReply: (body: string, image?: string) => Promise<void>;
   onEnd: () => Promise<void>;
   onReopen: () => Promise<void>;
   onToggleHidden: () => Promise<void>;
@@ -229,6 +239,9 @@ function OrderCard(props: {
   const { order, messages } = props;
   const [quote, setQuote] = useState(order.quote ?? "");
   const [draft, setDraft] = useState("");
+  const [image, setImage] = useState<string | null>(null);
+  const [sending, setSending] = useState(false);
+  const [chatError, setChatError] = useState("");
   const [deleteStep, setDeleteStep] = useState<0 | 1>(0);
   const [deleteError, setDeleteError] = useState("");
 
@@ -256,6 +269,14 @@ function OrderCard(props: {
         <>
           <p className="mt-3 text-sm font-semibold">Cotton stuffing</p>
           <p className="whitespace-pre-wrap text-muted-foreground">{order.stuffing}</p>
+        </>
+      )}
+      {order.tutorial_url && (
+        <>
+          <p className="mt-3 text-sm font-semibold">Tutorial link</p>
+          <div className="text-muted-foreground">
+            <LinkedText text={order.tutorial_url} />
+          </div>
         </>
       )}
 
@@ -316,7 +337,7 @@ function OrderCard(props: {
               }
             >
               <p className="text-xs opacity-70">{m.sender === "shop" ? "You" : order.customer_name}</p>
-              <p className="mt-1 whitespace-pre-wrap">{m.body}</p>
+              <ChatMessageBody body={m.body} imageUrl={m.image_url} />
             </li>
           ),
         )}
@@ -338,9 +359,18 @@ function OrderCard(props: {
           className="mt-4 grid gap-3"
           onSubmit={async (e) => {
             e.preventDefault();
-            if (!draft.trim()) return;
-            await props.onReply(draft.trim());
-            setDraft("");
+            if (!draft.trim() && !image) return;
+            setSending(true);
+            setChatError("");
+            try {
+              await props.onReply(draft.trim(), image ?? undefined);
+              setDraft("");
+              setImage(null);
+            } catch {
+              setChatError("Could not send that message.");
+            } finally {
+              setSending(false);
+            }
           }}
         >
           <textarea
@@ -348,12 +378,49 @@ function OrderCard(props: {
             onChange={(e) => setDraft(e.target.value)}
             rows={2}
             maxLength={1000}
-            placeholder="Write back to this customer…"
+            placeholder="Write back to this customer… you can paste a link here too"
             className="rounded-2xl border border-input bg-background px-4 py-3 outline-none focus:ring-2 focus:ring-ring"
           />
+          <div className="flex flex-wrap items-center gap-3">
+            <label className="cursor-pointer rounded-full border border-border px-4 py-2 text-sm font-semibold transition hover:bg-muted">
+              📷 Add a photo
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  e.target.value = "";
+                  if (!file) return;
+                  setChatError("");
+                  try {
+                    setImage(await fileToDataUrl(file));
+                  } catch {
+                    setChatError("That photo could not be read.");
+                  }
+                }}
+              />
+            </label>
+            {image && (
+              <span className="flex items-center gap-2 text-sm text-muted-foreground">
+                <img src={image} alt="Photo ready to send" className="h-10 w-10 rounded-lg object-cover" />
+                <button
+                  type="button"
+                  onClick={() => setImage(null)}
+                  className="underline underline-offset-2"
+                >
+                  remove
+                </button>
+              </span>
+            )}
+          </div>
+          {chatError && <p className="text-sm text-destructive">{chatError}</p>}
           <div className="flex flex-wrap gap-3">
-            <button className="rounded-full bg-primary px-5 py-2 font-semibold text-primary-foreground">
-              Send reply
+            <button
+              disabled={sending}
+              className="rounded-full bg-primary px-5 py-2 font-semibold text-primary-foreground disabled:opacity-60"
+            >
+              {sending ? "Sending…" : "Send reply"}
             </button>
             <button
               type="button"
