@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 import { CornerPhotos } from "@/components/CornerPhotos";
 import { FounderMark } from "@/components/FounderMark";
+import { ReversibleToyStopMotion } from "@/components/ReversibleToyStopMotion";
 import { createOrder } from "@/lib/orders.functions";
 
 export const Route = createFileRoute("/")({
@@ -122,6 +123,7 @@ function Index() {
         <p className="mx-auto mt-4 max-w-xl rounded-2xl border border-dashed border-primary/60 bg-card/70 px-4 py-3 font-serif text-base italic text-foreground">
           Paying and picking up happens whenever you see me in person — no online payment, no shipping. 💛
         </p>
+        <ReversibleToyStopMotion />
       </header>
 
       {placedCode ? (

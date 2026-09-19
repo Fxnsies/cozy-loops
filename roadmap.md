@@ -1,0 +1,2 @@
+- [ ] Replace all AI-edited stop-motion frames with the user's original photos.
+- [ ] Keep natural cropping, improve display lighting, and verify the opening/closing loop.
