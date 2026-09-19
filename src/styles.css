@@ -190,17 +190,23 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center 62%;
+  filter: brightness(1.08) contrast(0.94) saturate(0.93) sepia(0.04);
   opacity: 0;
   animation: stop-motion-swap 7s steps(1, end) infinite;
 }
 
 .stop-motion-frame:nth-child(1) { animation-delay: 0s; }
-.stop-motion-frame:nth-child(2) { animation-delay: 1s; }
-.stop-motion-frame:nth-child(3) { animation-delay: 2s; }
-.stop-motion-frame:nth-child(4) { animation-delay: 3s; }
-.stop-motion-frame:nth-child(5) { animation-delay: 4s; }
-.stop-motion-frame:nth-child(6) { animation-delay: 5s; }
-.stop-motion-frame:nth-child(7) { animation-delay: 6s; }
+.stop-motion-frame:nth-child(2) { animation-delay: -6s; }
+.stop-motion-frame:nth-child(3) { animation-delay: -5s; }
+.stop-motion-frame:nth-child(4) { animation-delay: -4s; }
+.stop-motion-frame:nth-child(5) { animation-delay: -3s; }
+.stop-motion-frame:nth-child(6) { animation-delay: -2s; }
+.stop-motion-frame:nth-child(7) { animation-delay: -1s; }
+
+.stop-motion-frame:nth-child(1) {
+  object-position: center 69%;
+}
 
 .stop-motion-stitch {
   position: absolute;
