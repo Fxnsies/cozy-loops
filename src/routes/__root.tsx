@@ -81,7 +81,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "Cozy Loops — Handmade Crochet Orders" },
       { name: "description", content: "Order custom handmade crochet pieces from Cozy Loops." },
       { name: "author", content: "Cozy Loops" },
-      <meta name="google-site-verification" content="-zCQuhuEV9Xz4t_HG5DE0_Sjdp6_uduI7gt-pu88Uxk" />
+      { name: "google-site-verification", content: "-zCQuhuEV9Xz4t_HG5DE0_Sjdp6_uduI7gt-pu88Uxk" },
       { property: "og:title", content: "Cozy Loops — Handmade Crochet Orders" },
       { property: "og:description", content: "Order custom handmade crochet pieces from Cozy Loops." },
       { property: "og:type", content: "website" },
