@@ -1,2 +1,3 @@
 - [ ] Replace all AI-edited stop-motion frames with the user's original photos.
 - [ ] Keep natural cropping, improve display lighting, and verify the opening/closing loop.
+- [x] Update TanStack Start security dependencies and verify the compatible lockfile resolution.
