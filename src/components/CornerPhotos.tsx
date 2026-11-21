@@ -1,13 +1,8 @@
-import bunny from "@/assets/bunny.jpg.asset.json";
-import frogCrown from "@/assets/frog-crown.jpg.asset.json";
-import frogPlain from "@/assets/frog-plain.jpg.asset.json";
-import turtle from "@/assets/turtle.jpg.asset.json";
-
 const photos = [
-  { src: bunny.url, alt: "Little white crochet bunny", pos: "left-3 top-4", tilt: "-6deg" },
-  { src: frogCrown.url, alt: "Green crochet frog with a crown", pos: "right-3 top-4", tilt: "5deg" },
-  { src: frogPlain.url, alt: "Green crochet frog", pos: "left-3 bottom-6", tilt: "7deg" },
-  { src: turtle.url, alt: "Tiny crochet electric turtle", pos: "right-3 bottom-28", tilt: "-5deg" },
+  { src: "/bunny.jpg", alt: "Little white crochet bunny", pos: "left-3 top-4", tilt: "-6deg" },
+  { src: "/frog-crown.jpg", alt: "Green crochet frog with a crown", pos: "right-3 top-4", tilt: "5deg" },
+  { src: "/frog-plain.jpg", alt: "Green crochet frog", pos: "left-3 bottom-6", tilt: "7deg" },
+  { src: "/turtle.jpg", alt: "Tiny crochet electric turtle", pos: "right-3 bottom-28", tilt: "-5deg" },
 ];
 
 export function CornerPhotos() {
