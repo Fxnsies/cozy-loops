@@ -1,9 +1,13 @@
-import closed from "@/assets/reversible-toy-closed-original.jpeg.asset.json";
-import opening from "@/assets/reversible-toy-opening-original.jpeg.asset.json";
-import openHand from "@/assets/reversible-toy-open-hand-original.jpeg.asset.json";
-import open from "@/assets/reversible-toy-open-original.jpeg.asset.json";
 
-const frames = [closed.url, opening.url, openHand.url, open.url, openHand.url, opening.url, closed.url];
+const frames = [
+  "/reversible-toy-closed-original.jpeg",
+  "/reversible-toy-opening-original.jpeg",
+  "/reversible-toy-open-hand-original.jpeg",
+  "/reversible-toy-open-original.jpeg",
+  "/reversible-toy-open-hand-original.jpeg",
+  "/reversible-toy-opening-original.jpeg",
+  "/reversible-toy-closed-original.jpeg",
+];
 
 export function ReversibleToyStopMotion() {
   return (
